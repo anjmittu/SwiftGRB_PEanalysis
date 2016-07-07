@@ -1,5 +1,5 @@
 #include "main.h"
-#include "NeuralNetwork.h"
+#include "NerunargsuralNetwork.h"
 extern "C" {
 	#include "utils.h"
 	#include "mock_sample_functions.h"
@@ -257,6 +257,7 @@ int main(int argc, char *argv[])
 	runargs.verbose = 1;
 	runargs.method = NEURALNET;
 	runargs.vary_z1 = false;
+	runargs.twobreak = false;
 
 	long int dataseed=0;
 

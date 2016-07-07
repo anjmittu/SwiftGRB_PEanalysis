@@ -366,3 +366,115 @@ double GRBRateIntegral(double n0, double n1, double n2, double z1)
 }
 
 
+//******Functions for Two Break Model*****************************************************************//
+
+double Redshift_distribution_unnormalizedTwoBreak(double z, double n1, double n2, double n3, double z1, double z2)
+{
+  if (z <= z1)
+    {
+      return pow(1.0 + z, n1);
+    } else {
+    return pow(1.0 + z1, n1 - n2) * pow(1.0 + z, n2);
+  }
+}
+
+double Redshift_distribution_normalizedTwoBreak(double z, double n0, double n1, double n2, double n3, double z1, double z2)
+{
+  return n0 * Redshift_distribution_unnormalized(z, n1, n2, n3, z1, z2);
+}
+
+double Redshift_rescaledTwoBreak(double z, void *params)
+{
+  double *pars = (double *) params;
+  double n0 = pars[0];
+  double n1 = pars[1];
+  double n2 = pars[2];
+  double n3 = pars[3];
+  double z1 = pars[4];
+  double z2 = pars[5];
+
+  double Rprime = Redshift_distribution_normalizedTwoBreak(z, n0, n1, n2, n3, z1, z2) / (1.0 + z);
+
+  Rprime *= DH3 * gsl_spline_eval(splineEz, z, accEz);
+
+  return Rprime;
+}
+
+double Redshift_rejection_samplerTwoBreak(long int *seed, double n0, double n1, double n2, double n3, double z1, double z2)
+{
+  double pars[4] = {n0, n1, n2, n3, z1, z2};
+	
+  double Rzmax = Redshift_rescaledTwoBreak(z1, (void *) &pars[0]);
+	
+  double z = 0.0, p, x;
+  for (;;)
+    {
+      z = ran2d(seed) * 10.0;
+		
+      p = Redshift_rescaledTwoBreak(z, (void *) &pars[0]) / Rzmax;
+
+      x = ran2d(seed);
+
+      if (x < p) break;
+    }
+
+  return z;
+}
+
+double GRBNumberIntegralTwoBreak(double n0, double n1, double n2, double n3, double z1, double z2)
+{
+  double pars[6] = {n0, n1, n2, n3, z1, z2};
+
+  double result, error;
+  unsigned long int neval;
+  gsl_function F;
+  F.function = &Redshift_rescaledTwoBreak;
+  F.params = (void *) &pars[0];
+
+  gsl_set_error_handler_off();
+  gsl_integration_qng(&F, ZMIN, ZMAX, 1e-7, 1e-6, &result, &error, &neval);
+
+  result *= 4.0 * M_PI;
+
+  return result;
+}
+
+double GRBRateTwoBreak(double z, double n0, double n1, double n2, double z3, double z1, double z2)
+{
+  double Rprime = Redshift_distribution_normalizedTwoBreak(z, n0, n1, n2, n3, z1, z2) / (1.0 + z);
+
+  Rprime *= DH3 * gsl_spline_eval(splineEz, z, accEz);
+
+  Rprime *= 4.0 * M_PI * runargs.tobs * gsl_spline_eval(splineDF, z, accDF) / 6.0;
+
+  return Rprime;
+}
+
+double GRBRateFuncTwoBreak(double z, void *params)
+{
+  double *pars = (double *) params;
+  double n0 = pars[0];
+  double n1 = pars[1];
+  double n2 = pars[2];
+  double n3 = pars[3];
+  double z1 = pars[4];
+  double z2 = pars[5];
+
+  return GRBRateTwoBreak(z, n0, n1, n2, n3, z1, z2);
+}
+
+double GRBRateIntegralTwoBreak(double n0, double n1, double n2, double n3, double z1, double z2)
+{
+  double pars[6] = {n0, n1, n2, n3, z1, z2};
+
+  double result, error;
+  unsigned long int neval;
+  gsl_function F;
+  F.function = &GRBRateFuncTwoBreak;
+  F.params = (void *) &pars[0];
+
+  gsl_set_error_handler_off();
+  gsl_integration_qng(&F, ZMIN, ZMAX, 1e-7, 1e-6, &result, &error, &neval);
+
+  return result;
+}

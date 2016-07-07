@@ -42,7 +42,7 @@ void read_options(int argc, char *argv[], RunArgs *args)
 {
 	int c;
 	static int resflag=0, helpflag=0, nstarflag=0, ntotalflag=0, flatn0flag=0, testflag=0, zllflag=0, verboseflag=1;
-	static int method=0, varyz1=0;
+	static int method=0, varyz1=0, breakflag=0;
 	
 	while (1)
 	{
@@ -58,6 +58,7 @@ void read_options(int argc, char *argv[], RunArgs *args)
 			{"zeroLogLike", no_argument, &zllflag, 1},
 			{"silent", no_argument, &verboseflag, 0},
 			{"varyz1", no_argument, &varyz1, 1},
+			{"twobreak", no_argument, &breakflag, 1},
 			/* These options don’t set a flag. We distinguish them by their indices. */
 			{"n0", optional_argument, 0, 'n'},
 			{"n1", optional_argument, 0, 'm'},
@@ -145,6 +146,7 @@ void read_options(int argc, char *argv[], RunArgs *args)
 	if (testflag == 1) args->testpop = true;
 	if (zllflag == 1) args->zeroLogLike = true;
 	if (varyz1 == 1) args->vary_z1 = true;
+	if (breakflag == 1) args->twobreak = true;
 
 	args->verbose = verboseflag;
 
