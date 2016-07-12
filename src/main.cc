@@ -1,5 +1,5 @@
 #include "main.h"
-#include "NerunargsuralNetwork.h"
+#include "NeuralNetwork.h"
 extern "C" {
 	#include "utils.h"
 	#include "mock_sample_functions.h"
@@ -12,6 +12,7 @@ extern "C" {
 #define NINPUTS		15 			// do not change this!
 
 #define Z1DATA			3.60
+#define Z2DATA			4.50
 #define XDATA			-0.65
 #define YDATA			-3.00
 #define LOGLSTARDATA	52.05
@@ -52,7 +53,9 @@ double CubeToLogPrior(double r, double xmin, double xmax)
 
 void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 {
-	double n0, n1, n2, nstar, ntotal, z1;
+  double n0, n1, n2, n3, nstar, ntotal, z1, z2;
+  n3 = 0;
+  z2 = 0;
 
 	// n1 from Cube[1]
 	n1 = CubeToFlatPrior(Cube[1], 0.00, 4.00);
@@ -60,11 +63,31 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 	// n2 from Cube[2]
 	n2 = CubeToFlatPrior(Cube[2], -6.00, 0.00);
 
-	// z1 from Cube[3]
-	if (runargs.vary_z1) {
-		z1 = CubeToFlatPrior(Cube[3], 0.00, 10.0);
+	if (runargs.twobreak) {
+	  // n3 from Cube[3]
+	  n3 = CubeToFlatPrior(Cube[3], 0.00, 6.00);
+	
+	  // z1 from Cube[4]
+	  if (runargs.vary_z1) {
+	    z1 = CubeToFlatPrior(Cube[4], 0.00, 10.0);
+	  } else {
+	    z1 = Z1DATA;
+	  }
+
+	  if (runargs.vary_z2) {
+	    z2 = CubeToFlatPrior(Cube[5], 0.00, 10.0);;
+	  } else {
+	    z2 = Z2DATA;
+	  }
+	  
+	  
 	} else {
-		z1 = Z1DATA;
+	  // z1 from Cube[3]
+	  if (runargs.vary_z1) {
+	    z1 = CubeToFlatPrior(Cube[3], 0.00, 10.0);
+	  } else {
+	    z1 = Z1DATA;
+	  }
 	}
 
 	// normalization parameters from Cube[0]
@@ -73,12 +96,22 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 		nstar = CubeToLogPrior(Cube[0], 0.10, 10000.0);
 		// n0
 		n0 = nstar * pow(1.0 + z1, -n1);
-		// ntotal
-		ntotal = GRBNumberIntegral(n0, n1, n2, z1);
+		if (runargs.twobreak) {
+		  // ntotal
+		  ntotal = GRBNumberIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
+		} else {
+		  // ntotal
+		  ntotal = GRBNumberIntegral(n0, n1, n2, z1);
+		}
 	} else if (runargs.ntotal) {
 		// ntotal
 		ntotal = CubeToLogPrior(Cube[0], 1.00, 1e5);
-		double ntmp = GRBNumberIntegral(1.0, n1, n2, z1);
+		double ntmp;
+		if (runargs.twobreak) {
+		  ntmp = GRBNumberIntegralTwoBreak(1.0, n1, n2, n3, z1, z2);
+		} else {
+		  ntmp = GRBNumberIntegral(1.0, n1, n2, z1);
+		}
 		// n0
 		n0 = ntotal / ntmp;
 		// nstar
@@ -93,15 +126,31 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 		// nstar
 		nstar = n0 * pow(1.0 + z1, n1);
 		// ntotal
-		ntotal = GRBNumberIntegral(n0, n1, n2, z1);
+		if (runargs.twobreak) {
+		  ntotal = GRBNumberIntegralTwoBreak(1.0, n1, n2, n3, z1, z2);
+		} else {
+		  ntotal = GRBNumberIntegral(1.0, n1, n2, z1);
+		}
+		
 	}
 
-	Cube[0] = n0;
-	Cube[1] = n1;
-	Cube[2] = n2;
-	Cube[3] = z1;
-	Cube[4] = nstar;
-	Cube[5] = ntotal;
+	if (runargs.twobreak) {
+	  Cube[0] = n0;
+	  Cube[1] = n1;
+	  Cube[2] = n2;
+	  Cube[3] = n3;
+	  Cube[4] = z1;
+	  Cube[5] = z2;
+	  Cube[6] = nstar;
+	  Cube[7] = ntotal;
+	} else {
+	  Cube[0] = n0;
+	  Cube[1] = n1;
+	  Cube[2] = n2;
+	  Cube[3] = z1;
+	  Cube[4] = nstar;
+	  Cube[5] = ntotal;
+	}
 }
 
 /******************************************** getallparams routine ****************************************************/
@@ -110,14 +159,25 @@ void getallparams(double *Cube, int &ndim, int &nPar, void *context)
 {
 	getphysparams(Cube,ndim,nPar,context);
 
-	// x
-	Cube[6] = XDATA;
+	if (runargs.twobreak) {
+	  // x
+	  Cube[8] = XDATA;
 
-	// y
-	Cube[7] = YDATA;
+	  // y
+	  Cube[9] = YDATA;
 
-	// log10(L_star)
-	Cube[8] = LOGLSTARDATA;
+	  // log10(L_star)
+	  Cube[10] = LOGLSTARDATA;
+	} else {
+	  // x
+	  Cube[6] = XDATA;
+
+	  // y
+	  Cube[7] = YDATA;
+
+	  // log10(L_star)
+	  Cube[8] = LOGLSTARDATA;
+	}
 }
 
 /******************************************** loglikelihood routine ****************************************************/
@@ -141,11 +201,20 @@ void getLogLike(double *Cube, int &ndim, int &npars, double &lnew, void *context
 
 	// Extract population parameters
 	getallparams(Cube,ndim,npars,context);
-	double n0, n1, n2, z1;
-	n0 = Cube[0];
-	n1 = Cube[1];
-	n2 = Cube[2];
-	z1 = Cube[3];
+	double n0, n1, n2, n3, z1, z2;
+	if (runargs.twobreak) {
+	  n0 = Cube[0];
+	  n1 = Cube[1];
+	  n2 = Cube[2];
+	  n3 = Cube[3];
+	  z1 = Cube[4];
+	  z2 = Cube[5];
+	} else {
+	  n0 = Cube[0];
+	  n1 = Cube[1];
+	  n2 = Cube[2];
+	  z1 = Cube[3];
+	}
 
 	// compute logL as in notes
 	if (runargs.zeroLogLike)
@@ -154,11 +223,19 @@ void getLogLike(double *Cube, int &ndim, int &npars, double &lnew, void *context
 	}
 	else
 	{
-		lnew = -1.0 * GRBRateIntegral(n0, n1, n2, z1);
+	  if (runargs.twobreak) {
+	    lnew = -1.0 * GRBRateIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
+	  } else {
+	    lnew = -1.0 * GRBRateIntegral(n0, n1, n2, z1);
+	  }
 		int i;
 		for (i = 0; i < ndetdata; i++)
 		{
-			lnew += log(GRBRate(zdata[i], n0, n1, n2, z1));
+		  if (runargs.twobreak) {
+		    lnew += log(GRBRateTwoBreak(zdata[i], n0, n1, n2, n3, z1, z2));
+		  } else {
+		    lnew += log(GRBRate(zdata[i], n0, n1, n2, z1));
+		  }
 		}
 		//printf("logL = %lf\n", lnew);
 	}
@@ -242,7 +319,9 @@ int main(int argc, char *argv[])
 	runargs.n0 = 0.42;
 	runargs.n1 = 2.07;
 	runargs.n2 = -0.7;
+	runargs.n3 = 1;
 	runargs.z1 = Z1DATA;
+	runargs.z2 = 5;
 	runargs.popsize = 1000;
 	runargs.datapopsize = 100;
 	runargs.seed = 0;
@@ -257,6 +336,7 @@ int main(int argc, char *argv[])
 	runargs.verbose = 1;
 	runargs.method = NEURALNET;
 	runargs.vary_z1 = false;
+	runargs.vary_z2 = false;
 	runargs.twobreak = false;
 
 	long int dataseed=0;
@@ -371,7 +451,12 @@ Model Settings\n\
 		
 		// simulate data
 		// calculate population size
-		double all_sky_rate = GRBNumberIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
+		double all_sky_rate;
+		if (runargs.twobreak) {
+		  all_sky_rate = GRBNumberIntegralTwoBreak(runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2);
+		} else {
+		  all_sky_rate = GRBNumberIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
+		}
 		printf("Computed an all-sky intrinsic rate of %lf GRBs/yr.\n", all_sky_rate);
 		runargs.datapopsize = (long int) (all_sky_rate * runargs.tobs / 6.0);
 		// allocate memory
@@ -382,7 +467,12 @@ Model Settings\n\
 		zdata = (double *) malloc(runargs.datapopsize * sizeof(double));
 		float dprob[2];
 		// simulate population
-		GeneratePopulation(datapop, runargs.datapopsize, runargs.n0, runargs.n1, runargs.n2, runargs.z1, XDATA, YDATA, LOGLSTARDATA, dataz, &dataseed);
+		if (runargs.twobreak) {
+		  GeneratePopulationTwoBreak(datapop, runargs.datapopsize, runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2,
+					     XDATA, YDATA, LOGLSTARDATA, dataz, &dataseed);
+		} else {
+		  GeneratePopulation(datapop, runargs.datapopsize, runargs.n0, runargs.n1, runargs.n2, runargs.z1, XDATA, YDATA, LOGLSTARDATA, dataz, &dataseed);
+		}
 		
 		// find detection probabilities
 		if (runargs.method == NEURALNET)
@@ -498,11 +588,23 @@ Model Settings\n\
 		free(dataz);
 		free(dataprob);
 
+		double logLnew;
 		// calculate new logL function at true values
-		double logLnew = -1.0 * GRBRateIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
-		for (i = 0; i < ndetdata; i++)
-		{
-			logLnew += log(GRBRate(zdata[i], runargs.n0, runargs.n1, runargs.n2, runargs.z1));
+		if (runargs.twobreak) {
+		  logLnew = -1.0 * GRBRateIntegralTwoBreak(runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2);
+		} else {
+		  logLnew = -1.0 * GRBRateIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
+		}
+		if (runargs.twobreak) {
+		  for (i = 0; i < ndetdata; i++)
+		    {
+		      logLnew += log(GRBRateTwoBreak(zdata[i], runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2));
+		    }
+		} else {
+		  for (i = 0; i < ndetdata; i++)
+		    {
+		      logLnew += log(GRBRate(zdata[i], runargs.n0, runargs.n1, runargs.n2, runargs.z1));
+		    }
 		}
 		printf("New logL = %lf at true values\n", logLnew);
 
@@ -520,7 +622,7 @@ Model Settings\n\
 		// save injected true values
 		sprintf(datasavefile, "%sinjected_values.txt", outroot);
 		datasave = fopen(datasavefile, "w");
-		fprintf(datasave, "%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n", runargs.n0, runargs.n1, runargs.n2, runargs.z1,
+		fprintf(datasave, "%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n", runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2,
 				runargs.n0 * pow(1.0 + runargs.z1, runargs.n1), all_sky_rate);
 		fclose(datasave);
 		printf("Injected values saved to %s\n", datasavefile);
@@ -547,14 +649,24 @@ Model Settings\n\
 	double efr = 0.1;				// set the required efficiency
 	
 	double tol = 0.1;				// tol, defines the stopping criteria
+
+	int ndims;
+	int nPar;
+	int nClsPar;
+	if (runargs.twobreak) {
+	  ndims = 5;                            // dimensionality (no. of free parameters)
+	  nPar = 11;				// total no. of parameters including free & derived parameters
+	  nClsPar = 5;				// no. of parameters to do mode separation on
+	} else {
+	  ndims = 3;				// dimensionality (no. of free parameters)
+	  nPar = 9;				// total no. of parameters including free & derived parameters
+	  nClsPar = 3;				// no. of parameters to do mode separation on
+	}
 	
-	int ndims = 3;					// dimensionality (no. of free parameters)
 	if (runargs.vary_z1) ndims++;
-	
-	int nPar = 9;					// total no. of parameters including free & derived parameters
-	
-	int nClsPar = 3;				// no. of parameters to do mode separation on
 	if (runargs.vary_z1) nClsPar++;
+	if (runargs.vary_z2) ndims++;
+	if (runargs.vary_z2) nClsPar++;
 	
 	int updInt = 50;				// after how many iterations feedback is required & the output files should be updated
 							// note: posterior files are updated & dumper routine is called after every updInt*10 iterations

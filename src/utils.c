@@ -42,7 +42,7 @@ void read_options(int argc, char *argv[], RunArgs *args)
 {
 	int c;
 	static int resflag=0, helpflag=0, nstarflag=0, ntotalflag=0, flatn0flag=0, testflag=0, zllflag=0, verboseflag=1;
-	static int method=0, varyz1=0, breakflag=0;
+	static int method=0, varyz1=0, varyz2=0, breakflag=0;
 	
 	while (1)
 	{
@@ -58,12 +58,15 @@ void read_options(int argc, char *argv[], RunArgs *args)
 			{"zeroLogLike", no_argument, &zllflag, 1},
 			{"silent", no_argument, &verboseflag, 0},
 			{"varyz1", no_argument, &varyz1, 1},
+			{"varyz2", no_argument, &varyz2, 1},
 			{"twobreak", no_argument, &breakflag, 1},
 			/* These options don’t set a flag. We distinguish them by their indices. */
 			{"n0", optional_argument, 0, 'n'},
 			{"n1", optional_argument, 0, 'm'},
 			{"n2", optional_argument, 0, 'l'},
+			{"n3", optional_argument, 0, 'c'},
 			{"z1", optional_argument, 0, 'y'},
+			{"z2", optional_argument, 0, 'g'},
 			{"seed", optional_argument, 0, 's'},
 			{"pop", optional_argument, 0, 'p'},
 			{"dpop", optional_argument, 0, 'd'},
@@ -94,10 +97,16 @@ void read_options(int argc, char *argv[], RunArgs *args)
 				args->n1 = atof(optarg);
 				break;
 			case 'l':
-				args->n2 = atof(optarg);
-				break;
-			case 'y':
+			        args->n2 = atof(optarg);
+			        break;
+		        case 'c':
+		                args->n3 = atof(optarg);
+		                break;
+		        case 'y':
 				args->z1 = atof(optarg);
+				break;
+			case 'g':
+				args->z2 = atof(optarg);
 				break;
 			case 's':
 				args->seed = atol(optarg);
@@ -146,6 +155,7 @@ void read_options(int argc, char *argv[], RunArgs *args)
 	if (testflag == 1) args->testpop = true;
 	if (zllflag == 1) args->zeroLogLike = true;
 	if (varyz1 == 1) args->vary_z1 = true;
+	if (varyz2 == 1) args->vary_z2 = true;
 	if (breakflag == 1) args->twobreak = true;
 
 	args->verbose = verboseflag;

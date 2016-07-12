@@ -370,17 +370,18 @@ double GRBRateIntegral(double n0, double n1, double n2, double z1)
 
 double Redshift_distribution_unnormalizedTwoBreak(double z, double n1, double n2, double n3, double z1, double z2)
 {
-  if (z <= z1)
-    {
-      return pow(1.0 + z, n1);
-    } else {
-    return pow(1.0 + z1, n1 - n2) * pow(1.0 + z, n2);
+  if (z <= z1) {
+    return pow(1.0 + z, n1);
+  } else if (z <= z2) {
+    return pow(1.0 + z, n2);
+  } else {
+    return pow(1.0 + z, n3);
   }
 }
 
 double Redshift_distribution_normalizedTwoBreak(double z, double n0, double n1, double n2, double n3, double z1, double z2)
 {
-  return n0 * Redshift_distribution_unnormalized(z, n1, n2, n3, z1, z2);
+  return n0 * Redshift_distribution_unnormalizedTwoBreak(z, n1, n2, n3, z1, z2);
 }
 
 double Redshift_rescaledTwoBreak(double z, void *params)
@@ -402,7 +403,7 @@ double Redshift_rescaledTwoBreak(double z, void *params)
 
 double Redshift_rejection_samplerTwoBreak(long int *seed, double n0, double n1, double n2, double n3, double z1, double z2)
 {
-  double pars[4] = {n0, n1, n2, n3, z1, z2};
+  double pars[6] = {n0, n1, n2, n3, z1, z2};
 	
   double Rzmax = Redshift_rescaledTwoBreak(z1, (void *) &pars[0]);
 	
@@ -439,7 +440,7 @@ double GRBNumberIntegralTwoBreak(double n0, double n1, double n2, double n3, dou
   return result;
 }
 
-double GRBRateTwoBreak(double z, double n0, double n1, double n2, double z3, double z1, double z2)
+double GRBRateTwoBreak(double z, double n0, double n1, double n2, double n3, double z1, double z2)
 {
   double Rprime = Redshift_distribution_normalizedTwoBreak(z, n0, n1, n2, n3, z1, z2) / (1.0 + z);
 

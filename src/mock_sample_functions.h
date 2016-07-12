@@ -37,7 +37,7 @@ double *Lambdaa,*Qea,*Qea2,Lambda,Qe,Qeap1,Qeapn;
 int N;
 
 //parameters for GRB property distributions
-double rate_GRB_0_global, z1_global, n1_global, n2_global;   //redshift distribution
+double rate_GRB_0_global, z1_global, n1_global, n2_global, n3_global, z2_global;   //redshift distribution
 double lum_star_global, log_lum_star_global, alpha1_global, beta1_global;  //luminosity distribution
 double lum_step_global; //luminosity evolution
 char Epeak_type[1000];  //Epeak distribution

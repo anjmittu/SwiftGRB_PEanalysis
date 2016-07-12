@@ -78,7 +78,7 @@ def plotRzPost(datafile, N, maxlike, zdatafile, outfile, annotate = False, title
 
 levels = 1.0 - np.exp(-0.5 * np.linspace(1.0, 3.0, num=3) ** 2)
 maxlike = {'NN': [.416,1.875,-.483,3.418,3421], 'RF': [.49,1.67,-2.76,6.84, 5404.51],
-Q    'AB': [.489,1.681,-5.95,6.682,4392]}
+    'AB': [.489,1.681,-5.95,6.682,4392]}
 #maxpost = {'NN': [.487,1.677,-.516,8.855,5756], 'RF': [.316,2.132,-.677,5.049,5552],
 #    'AB': [.756,1.224,-1.155,8.196,3974]}
 for model in ['RF','NN','AB']:
