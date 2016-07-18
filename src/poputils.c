@@ -373,9 +373,9 @@ double Redshift_distribution_unnormalizedTwoBreak(double z, double n1, double n2
   if (z <= z1) {
     return pow(1.0 + z, n1);
   } else if (z <= z2) {
-    return pow(1.0 + z, n2);
+    return pow(1.0 + z, n2) * pow(1.0 + z1, n1 - n2);
   } else {
-    return pow(1.0 + z, n3);
+    return pow(1.0 + z, n3) * pow(1.0 + z1, n1 - n2) * pow(1.0 + z2, n2 - n3);
   }
 }
 

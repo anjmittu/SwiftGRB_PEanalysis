@@ -14,8 +14,9 @@ def Rz(z,n):
     n3 = n[3]
     z1 = n[4]
     z2 = n[5]
-    R = np.piecewise(z, [z<=z1,z<=z2], [lambda x: n0*np.power((1+x),n1),
-                                        lambda x: n0*np.power((1+x),n2), lambda x: n0*np.power((1+x),n3)])
+    R = np.piecewise(z, [z<=z1,(z<=z2) & (z>z1), z>z2], [lambda x: n0*np.power((1+x),n1),
+                                                         lambda x: n0*np.power((1+x),n2)*np.power((1+z1),n1-n2),
+                                                         lambda x: n0*np.power((1+x),n3)*np.power((1+z1),n1-n2)*np.power((1+z2),n2-n3)])
     return R
 
 def plotRzPost(datafile, N, maxlike, zdatafile, outfile, annotate = False, title = None):
@@ -77,41 +78,41 @@ def plotRzPost(datafile, N, maxlike, zdatafile, outfile, annotate = False, title
     fig.savefig(outfile, bbox_inches='tight', pad_inches=0.05, dpi=200)
     #plt.show()
 
+    
 
-levels = 1.0 - np.exp(-0.5 * np.linspace(1.0, 3.0, num=3) ** 2)
-maxlike = {'NN': [.416,1.875,-.483,2, 3.418,5,3421], 'RF': [.49,1.67,-2.76,2,6.84, 8,5404.51],
-    'AB': [.489,1.681,-5.95,2,6.682,8,4392]}
-#maxpost = {'NN': [.487,1.677,-.516,8.855,5756], 'RF': [.316,2.132,-.677,5.049,5552],
-#    'AB': [.756,1.224,-1.155,8.196,3974]}
-for model in ['RF','NN','AB']:
-    datafile = 'chains/RealDataRun_'+model+'_TwoBreak_post_equal_weights.dat'
-    data = np.loadtxt(datafile, usecols=(0,1,2,3,5,6,7))
-    figure = triangle.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$n_3$', r'$z_1$', r'$z_2$', r'$N_{\rm tot}$'],
+try:
+    bestfit = [0.42, 2.07, -0.7, 3.6, 4570.315127]
+    levels = 1.0 - np.exp(-0.5 * np.linspace(1.0, 3.0, num=3) ** 2)
+    maxlike = {'NN': [0.465,1.918,-5.961,5.617,4924], 'RF': [.408,2.074,-5.962,5.219,4937],
+               'AB': [.385,2.163,-5.971,4.888,4818]}
+    for model in ['NN','RF','AB']:
+        datafile = 'chains/Seed'+sys.argv[1]+'_'+model+'_TwoBreak_post_equal_weights.dat'
+        data = np.loadtxt(datafile, usecols=(0,1,2,3,5))
+        figure = triangle.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$z_1$', r'$N_{\rm tot}$'],
+                                 bins=50, truths=bestfit, quantiles=[0.05, 0.5, 0.95], show_titles=True,
+                                 title_args={"fontsize": 14}, verbose=False, levels=levels, smooth1d=1, smooth=1,
+                                 range=[(0,1.6),(0.7,4.0),(-6,0),(1.,10),(2500,12000)],
+                                 maxlike=maxlike[model], label_kwargs={"fontsize": 20})
+        figure.savefig('./chains/seed'+sys.argv[1]+'_'+model+'_TwoBreak_posterior_.png')
+        plt.close(figure)
+        
+except IndexError:
+    levels = 1.0 - np.exp(-0.5 * np.linspace(1.0, 3.0, num=3) ** 2)
+    maxlike = {'NN': [.416,1.875,-.483,2, 3.418,5,3421], 'RF': [.49,1.67,-2.76,2,6.84, 8,5404.51],
+               'AB': [.489,1.681,-5.95,2,6.682,8,4392]}
+    #maxpost = {'NN': [.487,1.677,-.516,8.855,5756], 'RF': [.316,2.132,-.677,5.049,5552],
+    #    'AB': [.756,1.224,-1.155,8.196,3974]}
+    for model in ['RF','NN','AB']:
+        datafile = 'chains/RealDataRun_'+model+'_TwoBreak_post_equal_weights.dat'
+        data = np.loadtxt(datafile, usecols=(0,1,2,3,5,6,7))
+        figure = triangle.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$n_3$', r'$z_1$', r'$z_2$', r'$N_{\rm tot}$'],
                              bins=50, quantiles=[0.05, 0.5, 0.95], show_titles=True, levels=levels,
                              title_args={"fontsize": 14}, verbose=False, smooth1d=1, smooth=1,
-                             range=[(0,1.6),(0.7,3.2),(-6,0),(0,6),(1.,10),(1.,10),(1500,10000)],
+                             range=[(0,1.6),(0.7,3.2),(-6,6),(-6,0),(1.,10),(1.,10),(1500,10000)],
                              maxlike=maxlike[model], label_kwargs={"fontsize": 20})
-    figure.savefig('./chains/RealData_'+model+'_TwoBreak_posterior.png')
-    plt.close(figure)
+        figure.savefig('./chains/RealData_'+model+'_TwoBreak_posterior.png')
+        plt.close(figure)
 
-
-bestfit = [0.42, 2.07, -0.7, 3.6, 4570.315127]
-levels = 1.0 - np.exp(-0.5 * np.linspace(1.0, 3.0, num=3) ** 2)
-maxlike = {'NN': [0.465,1.918,-5.961,5.617,4924], 'RF': [.408,2.074,-5.962,5.219,4937],
-    'AB': [.385,2.163,-5.971,4.888,4818]}
-"""
-for model in ['NN','RF','AB']:
-    datafile = 'chains/PosteriorRun'+sys.argv[1]+'_post_equal_weights.dat'
-    data = np.loadtxt(datafile, usecols=(0,1,2,3,5))
-    figure = triangle.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$z_1$', r'$N_{\rm tot}$'],
-                             bins=50, truths=bestfit, quantiles=[0.05, 0.5, 0.95], show_titles=True,
-                             title_args={"fontsize": 14}, verbose=False, levels=levels, smooth1d=1, smooth=1,
-                             range=[(0,1.6),(0.7,4.0),(-6,0),(1.,10),(2500,12000)],
-                             maxlike=maxlike[model], label_kwargs={"fontsize": 20})
-    figure.savefig('./chains/seed'+sys.argv[1]+'_posterior_'+model+'.png')
-    plt.close(figure)
-
-"""
 detfrac_data = np.loadtxt('support_data/splines_detection_fraction_z_RF.txt')
 detfrac = interp1d(detfrac_data[:,0], detfrac_data[:,1], kind='linear')
 Ez_data = np.loadtxt('support_data/splines_Ez.txt', usecols=(0,3))
@@ -141,17 +142,21 @@ plotRzPost('chains/bestfit_varyz1_NN_post_equal_weights.dat', N, [0.465,1.918,-5
     '../../paper/figures/redshift_distribution_posterior_NN_bestfit.png',
     title = 'Simulated Data')
 """
-maxlike = {'NN': [.49,1.67,-2.72,2,6.79,8,4517.59], 'RF': [.49,1.68,-2.64,2,6.8,8,4534.53],
-    'AB': [.48,1.68,-2.7,2,6.81,8,4523.88]}
-for model in ['NN','RF','AB']: 
-    plotRzPost('chains/RealDataRun_'+model+'_TwoBreak_post_equal_weights.dat', N, maxlike[model],
-               'support_data/FynboGRB_lum_z_Zonly.txt',
-               './chains/RealData_'+model+'_TwoBreak_redshift_distribution_posterior_RF_bestfit.png',
-               title = 'Real Data')
 
-"""
-plotRzPost('chains/PosteriorRun'+sys.argv[1]+'_post_equal_weights.dat', N, [.5,1.82,-3.57,4.87],
-    'chains/PosteriorRun'+sys.argv[1]+'_detectedZdata.txt',
-    './chains/seed'+sys.argv[1]+'_redshift_distribution_posterior_RF_bestfit.png', True,
-    title = 'Simulated Data')
-"""
+maxlike = {'NN': [.59, 1.44, -.09, -4.88, 7.5, 8.8, 4517.59], 'RF': [.51, 1.61, -.18, -5.09, 7.9, 9, 4534.53],
+    'AB': [.52, 1.61, -.3, -5, 7.91, 9, 9966.27]}
+
+try:
+    for model in ['NN','RF','AB']:
+        plotRzPost('chains/Seed'+sys.argv[1]+'_'+model+'_TwoBreak_post_equal_weights.dat', N, maxlike[model],
+                   'chains/Seed'+sys.argv[1]+'_'+model+'_TwoBreak_detectedZdata.txt',
+                   './chains/seed'+sys.argv[1]+'_'+model+'_TwoBreak_redshift_distribution_posterior_RF_bestfit.png', True,
+                   title = 'Simulated Data')
+
+except IndexError:
+    for model in ['NN','RF','AB']: 
+        plotRzPost('chains/RealDataRun_'+model+'_TwoBreak_post_equal_weights.dat', N, maxlike[model],
+                   'support_data/FynboGRB_lum_z_Zonly.txt',
+                   './chains/RealData_'+model+'_TwoBreak_redshift_distribution_posterior_RF_bestfit.png',
+                   title = 'Real Data')
+

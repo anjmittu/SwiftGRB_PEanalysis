@@ -60,12 +60,13 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 	// n1 from Cube[1]
 	n1 = CubeToFlatPrior(Cube[1], 0.00, 4.00);
 
-	// n2 from Cube[2]
-	n2 = CubeToFlatPrior(Cube[2], -6.00, 0.00);
-
 	if (runargs.twobreak) {
+
+	  // n2 from Cube[2]
+	  n2 = CubeToFlatPrior(Cube[2], -6.00, 6.00);
+	
 	  // n3 from Cube[3]
-	  n3 = CubeToFlatPrior(Cube[3], 0.00, 6.00);
+	  n3 = CubeToFlatPrior(Cube[3], -10.00, 0.00);
 	
 	  // z1 from Cube[4]
 	  if (runargs.vary_z1) {
@@ -79,9 +80,18 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 	  } else {
 	    z2 = Z2DATA;
 	  }
+
+	  if (z1 >= z2) {
+	    double temp = z1;
+	    z1 = z2;
+	    z2 = temp;
+	  }
 	  
 	  
 	} else {
+	  // n2 from Cube[2]
+	  n2 = CubeToFlatPrior(Cube[2], -6.00, 0.00);
+	  
 	  // z1 from Cube[3]
 	  if (runargs.vary_z1) {
 	    z1 = CubeToFlatPrior(Cube[3], 0.00, 10.0);
@@ -209,6 +219,7 @@ void getLogLike(double *Cube, int &ndim, int &npars, double &lnew, void *context
 	  n3 = Cube[3];
 	  z1 = Cube[4];
 	  z2 = Cube[5];
+
 	} else {
 	  n0 = Cube[0];
 	  n1 = Cube[1];
@@ -222,23 +233,28 @@ void getLogLike(double *Cube, int &ndim, int &npars, double &lnew, void *context
 		lnew = 0.0;
 	}
 	else
-	{
-	  if (runargs.twobreak) {
-	    lnew = -1.0 * GRBRateIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
-	  } else {
-	    lnew = -1.0 * GRBRateIntegral(n0, n1, n2, z1);
-	  }
-		int i;
-		for (i = 0; i < ndetdata; i++)
-		{
-		  if (runargs.twobreak) {
-		    lnew += log(GRBRateTwoBreak(zdata[i], n0, n1, n2, n3, z1, z2));
-		  } else {
-		    lnew += log(GRBRate(zdata[i], n0, n1, n2, z1));
-		  }
+	  {
+	    if (runargs.twobreak) {
+	      lnew = -1.0 * GRBRateIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
+	    } else {
+	      lnew = -1.0 * GRBRateIntegral(n0, n1, n2, z1);
+	    }
+	    int i;
+	    for (i = 0; i < ndetdata; i++)
+	      {
+		if (runargs.twobreak) {
+		  lnew += log(GRBRateTwoBreak(zdata[i], n0, n1, n2, n3, z1, z2));
+		} else {
+		  lnew += log(GRBRate(zdata[i], n0, n1, n2, z1));
 		}
-		//printf("logL = %lf\n", lnew);
-	}
+	      }
+	    //printf("logL = %lf\n", lnew);
+	    //printf("n0 = %lf\n", n0);
+	    //printf("n1 = %lf\n", n1);
+	    //printf("n2 = %lf\n", n2);
+	    //printf("n3 = %lf\n", n3);
+	    //printf("\n");
+	  }
 
 	//t = clock() - t;
 	//printf("%lf ms for logL\n", 1.0e3 * (double)t / CLOCKS_PER_SEC);
@@ -307,46 +323,46 @@ void dumper(int &nSamples, int &nlive, int &nPar, double **physLive, double **po
 int main(int argc, char *argv[])
 {
 #ifdef PARALLEL
- 	MPI_Init(&argc,&argv);
-	MPI_Comm_rank(MPI_COMM_WORLD,&myid);
+  MPI_Init(&argc,&argv);
+  MPI_Comm_rank(MPI_COMM_WORLD,&myid);
 #endif
 	
-	int i,j;
+  int i,j;
 
-	// initialize default options for arguments
-	runargs.resume = 0;
-	runargs.help = 0;
-	runargs.n0 = 0.42;
-	runargs.n1 = 2.07;
-	runargs.n2 = -0.7;
-	runargs.n3 = 1;
-	runargs.z1 = Z1DATA;
-	runargs.z2 = 5;
-	runargs.popsize = 1000;
-	runargs.datapopsize = 100;
-	runargs.seed = 0;
-	strcpy(runargs.datafile,"\0");
-	runargs.nlive = 100;
-	runargs.nstar = false;
-	runargs.flatn0 = false;
-	runargs.tobs = 0.8;
-	runargs.nbins = 50;
-	runargs.zeroLogLike = false;
-	strcpy(runargs.outfile,"");
-	runargs.verbose = 1;
-	runargs.method = NEURALNET;
-	runargs.vary_z1 = false;
-	runargs.vary_z2 = false;
-	runargs.twobreak = false;
+  // initialize default options for arguments
+  runargs.resume = 0;
+  runargs.help = 0;
+  runargs.n0 = 0.42;
+  runargs.n1 = 2.07;
+  runargs.n2 = -0.7;
+  runargs.n3 = 1;
+  runargs.z1 = Z1DATA;
+  runargs.z2 = 5;
+  runargs.popsize = 1000;
+  runargs.datapopsize = 100;
+  runargs.seed = 0;
+  strcpy(runargs.datafile,"\0");
+  runargs.nlive = 100;
+  runargs.nstar = false;
+  runargs.flatn0 = false;
+  runargs.tobs = 0.8;
+  runargs.nbins = 50;
+  runargs.zeroLogLike = false;
+  strcpy(runargs.outfile,"");
+  runargs.verbose = 1;
+  runargs.method = NEURALNET;
+  runargs.vary_z1 = false;
+  runargs.vary_z2 = false;
+  runargs.twobreak = false;
 
-	long int dataseed=0;
+  long int dataseed=0;
 
-	// get command-line options
-	read_options(argc, argv, &runargs);
+  // get command-line options
+  read_options(argc, argv, &runargs);
 
-	if ( runargs.help == 1 )
-	{
-		char helpstr[] = "\n\
+  if ( runargs.help == 1 )
+    {
+      char helpstr[] = "\n\
 This program runs BAMBI on the Swift GRB population-fitting problem. Here are available options:\n\
 \n\
 --help       Print this help and exit\n\
@@ -384,340 +400,340 @@ Model Settings\n\
 --flatn0         use flat prior (instead of log) on n0\n\
 --varyz1         allow z1 to vary from fixed 3.6\n\
 \n";
-		printf("%s",helpstr);
+      printf("%s",helpstr);
 #ifdef PARALLEL
- 	MPI_Finalize();
+      MPI_Finalize();
 #endif
-		return 0;
-	}
+      return 0;
+    }
 
-	if ( runargs.seed==0 && strcmp(runargs.datafile,"")==0 )
-	{
-		fprintf(stderr, "You need to provide either a data seed (--seed) or an input data file (--file).\n");
+  if ( runargs.seed==0 && strcmp(runargs.datafile,"")==0 )
+    {
+      fprintf(stderr, "You need to provide either a data seed (--seed) or an input data file (--file).\n");
 #ifdef PARALLEL
- 	MPI_Finalize();
+      MPI_Finalize();
 #endif
-		return 0;
-	}
+      return 0;
+    }
 
-	dataseed = -347*runargs.seed;
+  dataseed = -347*runargs.seed;
 
-	// read in values for the background possibilities of simulated GRBs
-	read_background_values();
+  // read in values for the background possibilities of simulated GRBs
+  read_background_values();
 
-	// load the splines
-	load_splines();
+  // load the splines
+  load_splines();
 
-	// allocate memory
-	sample = (float *) malloc(NINPUTS * sizeof(float));
-	detcount = (int *) malloc(runargs.nbins * sizeof(int));
-	popcount = (int *) malloc(runargs.nbins * sizeof(int));
+  // allocate memory
+  sample = (float *) malloc(NINPUTS * sizeof(float));
+  detcount = (int *) malloc(runargs.nbins * sizeof(int));
+  popcount = (int *) malloc(runargs.nbins * sizeof(int));
 
-	char outroot[100] = "";
-	if ( runargs.seed == 0 )
+  char outroot[100] = "";
+  if ( runargs.seed == 0 )
+    {
+      if (strlen(runargs.outfile)==0)
 	{
-		if (strlen(runargs.outfile)==0)
-		{
-			sprintf(outroot, "chains/analysis_realdata_");
-		}
-		else
-		{
-			strcpy(outroot, runargs.outfile);
-		}
-		
-		// Read in data
-		ndetdata = countlines(runargs.datafile);
-		zdata = (double *) malloc(ndetdata * sizeof(double));
-		FILE *fptr = fopen(runargs.datafile, "r");
-		for ( i=0; i<ndetdata; i++ )
-		{
-			fscanf(fptr, "%lf\n", &zdata[i]);
-		}
-		fclose(fptr);
-		printf("Data read in from file with %d detected GRBs.\n", (int) ndetdata);
-		logpois0 = -0.5 * log(2.0 * M_PI * (double) ndetdata);
+	  sprintf(outroot, "chains/analysis_realdata_");
 	}
-	else
+      else
 	{
-		if (strlen(runargs.outfile)==0)
-		{
-			sprintf(outroot, "chains/analysis_n0%d_n1%d_n2%d_seed%ld_", (int)round(fabs(runargs.n0*100)), 
-					(int)round(fabs(runargs.n1*100)), (int)round(fabs(runargs.n2*100)), runargs.seed);
-		}
-		else
-		{
-			strcpy(outroot, runargs.outfile);
-		}
+	  strcpy(outroot, runargs.outfile);
+	}
 		
-		// simulate data
-		// calculate population size
-		double all_sky_rate;
-		if (runargs.twobreak) {
-		  all_sky_rate = GRBNumberIntegralTwoBreak(runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2);
-		} else {
-		  all_sky_rate = GRBNumberIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
-		}
-		printf("Computed an all-sky intrinsic rate of %lf GRBs/yr.\n", all_sky_rate);
-		runargs.datapopsize = (long int) (all_sky_rate * runargs.tobs / 6.0);
-		// allocate memory
-		double *datapop=NULL, *dataz=NULL, *dataprob=NULL;
-		datapop = (double *) malloc(runargs.datapopsize * NINPUTS * sizeof(double));
-		dataz = (double *) malloc(runargs.datapopsize * sizeof(double));
-		dataprob = (double *) malloc(runargs.datapopsize * sizeof(double));
-		zdata = (double *) malloc(runargs.datapopsize * sizeof(double));
-		float dprob[2];
-		// simulate population
-		if (runargs.twobreak) {
-		  GeneratePopulationTwoBreak(datapop, runargs.datapopsize, runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2,
-					     XDATA, YDATA, LOGLSTARDATA, dataz, &dataseed);
-		} else {
-		  GeneratePopulation(datapop, runargs.datapopsize, runargs.n0, runargs.n1, runargs.n2, runargs.z1, XDATA, YDATA, LOGLSTARDATA, dataz, &dataseed);
-		}
+      // Read in data
+      ndetdata = countlines(runargs.datafile);
+      zdata = (double *) malloc(ndetdata * sizeof(double));
+      FILE *fptr = fopen(runargs.datafile, "r");
+      for ( i=0; i<ndetdata; i++ )
+	{
+	  fscanf(fptr, "%lf\n", &zdata[i]);
+	}
+      fclose(fptr);
+      printf("Data read in from file with %d detected GRBs.\n", (int) ndetdata);
+      logpois0 = -0.5 * log(2.0 * M_PI * (double) ndetdata);
+    }
+  else
+    {
+      if (strlen(runargs.outfile)==0)
+	{
+	  sprintf(outroot, "chains/analysis_n0%d_n1%d_n2%d_seed%ld_", (int)round(fabs(runargs.n0*100)), 
+		  (int)round(fabs(runargs.n1*100)), (int)round(fabs(runargs.n2*100)), runargs.seed);
+	}
+      else
+	{
+	  strcpy(outroot, runargs.outfile);
+	}
 		
-		// find detection probabilities
-		if (runargs.method == NEURALNET)
-		{
-			// read in saved NN
-			GRBnn = new FeedForwardClassNetwork();
-			GRBnn->read("support_data/Swift_NN_all_nhid-100-50_act330_network.txt");
+      // simulate data
+      // calculate population size
+      double all_sky_rate;
+      if (runargs.twobreak) {
+	all_sky_rate = GRBNumberIntegralTwoBreak(runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2);
+      } else {
+	all_sky_rate = GRBNumberIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
+      }
+      printf("Computed an all-sky intrinsic rate of %lf GRBs/yr.\n", all_sky_rate);
+      runargs.datapopsize = (long int) (all_sky_rate * runargs.tobs / 6.0);
+      // allocate memory
+      double *datapop=NULL, *dataz=NULL, *dataprob=NULL;
+      datapop = (double *) malloc(runargs.datapopsize * NINPUTS * sizeof(double));
+      dataz = (double *) malloc(runargs.datapopsize * sizeof(double));
+      dataprob = (double *) malloc(runargs.datapopsize * sizeof(double));
+      zdata = (double *) malloc(runargs.datapopsize * sizeof(double));
+      float dprob[2];
+      // simulate population
+      if (runargs.twobreak) {
+	GeneratePopulationTwoBreak(datapop, runargs.datapopsize, runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2,
+				   XDATA, YDATA, LOGLSTARDATA, dataz, &dataseed);
+      } else {
+	GeneratePopulation(datapop, runargs.datapopsize, runargs.n0, runargs.n1, runargs.n2, runargs.z1, XDATA, YDATA, LOGLSTARDATA, dataz, &dataseed);
+      }
+		
+      // find detection probabilities
+      if (runargs.method == NEURALNET)
+	{
+	  // read in saved NN
+	  GRBnn = new FeedForwardClassNetwork();
+	  GRBnn->read("support_data/Swift_NN_all_nhid-100-50_act330_network.txt");
 			
-			// perform predictions
-			for ( i=0; i<runargs.datapopsize; i++)
-			{
-				for ( j=0; j<NINPUTS; j++ )
-				{
-					sample[j] = (float) datapop[i*NINPUTS+j];
-				}
-				GRBnn->forwardOne(1, &sample[0], &dprob[0]);
-				dataprob[i] = (double) dprob[1];
-			}
-		}
-		else if (runargs.method == RANDOMFOREST || runargs.method == ADABOOST)
+	  // perform predictions
+	  for ( i=0; i<runargs.datapopsize; i++)
+	    {
+	      for ( j=0; j<NINPUTS; j++ )
 		{
-			char outfilename[100], infilename[100], command[200];
-			sprintf(outfilename, "population_data.txt");
-			sprintf(infilename, "population_predictions.txt");
-
-			if (myid == 0)
-			{
-				FILE *outfileptr = fopen(outfilename, "w");
-				for ( i=0; i<runargs.datapopsize; i++)
-				{
-					for ( j=0; j<NINPUTS; j++ )
-					{
-						fprintf(outfileptr, "%lf ", datapop[i*NINPUTS+j]);
-					}
-					fprintf(outfileptr, "\n");
-				}
-				fclose(outfileptr);
-
-				// run python script for RF
-				char command[200];
-				if (runargs.method == RANDOMFOREST)
-				{
-					sprintf(command, "python evalRF.py %s %s", outfilename, infilename);
-				}
-				else
-				{
-					sprintf(command, "python evalAB.py %s %s", outfilename, infilename);
-				}
-				system(command);
-			}
-
-#ifdef PARALLEL
- 			MPI_Barrier(MPI_COMM_WORLD);
-#endif
-
-			FILE *infileptr = fopen(infilename, "r");
-			for ( i=0; i<runargs.datapopsize; i++)
-			{
-				fscanf(infileptr, "%lf\n", &dataprob[i]);
-			}
-			fclose(infileptr);
-
-#ifdef PARALLEL
- 			MPI_Barrier(MPI_COMM_WORLD);
-#endif
-
-			if (myid == 0)
-			{
-				sprintf(command, "rm -f %s %s", outfilename, infilename);
-				system(command);
-			}
+		  sample[j] = (float) datapop[i*NINPUTS+j];
 		}
-		else if (runargs.method == FLUXTHRESH)
-		{
-			for ( i=0; i<runargs.datapopsize; i++)
-			{
-				if (datapop[i*NINPUTS+13] >= LOG10_FLUX_THRESHOLD)
-					dataprob[i] = 1.0;
-				else
-					dataprob[i] = 0.0;
-			}
-		}
-		else
-		{
-			fprintf(stderr, "Invalid method chosen: %d\n", runargs.method);
-#ifdef PARALLEL
- 			MPI_Finalize();
-#endif
- 			exit(-1);
-		}
-
-		// find list of detected GRBs
-		detected(dataz, dataprob, runargs.datapopsize, 0.5, zdata, &ndetdata);
-		printf("Simulated data population generated with %ld GRBs => %ld detected\n", runargs.datapopsize, ndetdata);
-		
-		// if printing a test population
-		if (runargs.testpop)
-		{
-			FILE *fptr = fopen("population_test.txt","w");
-			for ( i=0; i<runargs.datapopsize; i++)
-			{
-				for ( j=0; j<NINPUTS; j++ )
-				{
-					fprintf(fptr, "%lf ", datapop[i*NINPUTS+j]);
-				}
-				fprintf(fptr, "%lf\n", dataprob[i]);
-			}
-			fclose(fptr);
-		}
-		
-		// free memory
-		free(datapop);
-		free(dataz);
-		free(dataprob);
-
-		double logLnew;
-		// calculate new logL function at true values
-		if (runargs.twobreak) {
-		  logLnew = -1.0 * GRBRateIntegralTwoBreak(runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2);
-		} else {
-		  logLnew = -1.0 * GRBRateIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
-		}
-		if (runargs.twobreak) {
-		  for (i = 0; i < ndetdata; i++)
-		    {
-		      logLnew += log(GRBRateTwoBreak(zdata[i], runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2));
-		    }
-		} else {
-		  for (i = 0; i < ndetdata; i++)
-		    {
-		      logLnew += log(GRBRate(zdata[i], runargs.n0, runargs.n1, runargs.n2, runargs.z1));
-		    }
-		}
-		printf("New logL = %lf at true values\n", logLnew);
-
-		// save detected GRB redshifts
-		char datasavefile[200];
-		sprintf(datasavefile, "%sdetectedZdata.txt", outroot);
-		FILE *datasave = fopen(datasavefile, "w");
-		for (i = 0; i < ndetdata; i++)
-		{
-			fprintf(datasave, "%lf\n", zdata[i]);
-		}
-		fclose(datasave);
-		printf("Detected GRB redshifts saved to %s\n", datasavefile);
-
-		// save injected true values
-		sprintf(datasavefile, "%sinjected_values.txt", outroot);
-		datasave = fopen(datasavefile, "w");
-		fprintf(datasave, "%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n", runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2,
-				runargs.n0 * pow(1.0 + runargs.z1, runargs.n1), all_sky_rate);
-		fclose(datasave);
-		printf("Injected values saved to %s\n", datasavefile);
+	      GRBnn->forwardOne(1, &sample[0], &dprob[0]);
+	      dataprob[i] = (double) dprob[1];
+	    }
 	}
-
-	if (runargs.testpop)
+      else if (runargs.method == RANDOMFOREST || runargs.method == ADABOOST)
 	{
+	  char outfilename[100], infilename[100], command[200];
+	  sprintf(outfilename, "population_data.txt");
+	  sprintf(infilename, "population_predictions.txt");
+
+	  if (myid == 0)
+	    {
+	      FILE *outfileptr = fopen(outfilename, "w");
+	      for ( i=0; i<runargs.datapopsize; i++)
+		{
+		  for ( j=0; j<NINPUTS; j++ )
+		    {
+		      fprintf(outfileptr, "%lf ", datapop[i*NINPUTS+j]);
+		    }
+		  fprintf(outfileptr, "\n");
+		}
+	      fclose(outfileptr);
+
+	      // run python script for RF
+	      char command[200];
+	      if (runargs.method == RANDOMFOREST)
+		{
+		  sprintf(command, "python evalRF.py %s %s", outfilename, infilename);
+		}
+	      else
+		{
+		  sprintf(command, "python evalAB.py %s %s", outfilename, infilename);
+		}
+	      system(command);
+	    }
+
 #ifdef PARALLEL
- 		MPI_Finalize();
+	  MPI_Barrier(MPI_COMM_WORLD);
 #endif
- 		exit(0);
+
+	  FILE *infileptr = fopen(infilename, "r");
+	  for ( i=0; i<runargs.datapopsize; i++)
+	    {
+	      fscanf(infileptr, "%lf\n", &dataprob[i]);
+	    }
+	  fclose(infileptr);
+
+#ifdef PARALLEL
+	  MPI_Barrier(MPI_COMM_WORLD);
+#endif
+
+	  if (myid == 0)
+	    {
+	      sprintf(command, "rm -f %s %s", outfilename, infilename);
+	      system(command);
+	    }
+	}
+      else if (runargs.method == FLUXTHRESH)
+	{
+	  for ( i=0; i<runargs.datapopsize; i++)
+	    {
+	      if (datapop[i*NINPUTS+13] >= LOG10_FLUX_THRESHOLD)
+		dataprob[i] = 1.0;
+	      else
+		dataprob[i] = 0.0;
+	    }
+	}
+      else
+	{
+	  fprintf(stderr, "Invalid method chosen: %d\n", runargs.method);
+#ifdef PARALLEL
+	  MPI_Finalize();
+#endif
+	  exit(-1);
 	}
 
-	printf("Writing outputs to %s*\n", outroot);
-
-	// set the MultiNest sampling parameters
-	
-	int mmodal = 0;					// do mode separation?
-	
-	int ceff = 0;					// run in constant efficiency mode?
-	
-	int nlive = runargs.nlive;				// number of live points
-	
-	double efr = 0.1;				// set the required efficiency
-	
-	double tol = 0.1;				// tol, defines the stopping criteria
-
-	int ndims;
-	int nPar;
-	int nClsPar;
-	if (runargs.twobreak) {
-	  ndims = 5;                            // dimensionality (no. of free parameters)
-	  nPar = 11;				// total no. of parameters including free & derived parameters
-	  nClsPar = 5;				// no. of parameters to do mode separation on
-	} else {
-	  ndims = 3;				// dimensionality (no. of free parameters)
-	  nPar = 9;				// total no. of parameters including free & derived parameters
-	  nClsPar = 3;				// no. of parameters to do mode separation on
+      // find list of detected GRBs
+      detected(dataz, dataprob, runargs.datapopsize, 0.5, zdata, &ndetdata);
+      printf("Simulated data population generated with %ld GRBs => %ld detected\n", runargs.datapopsize, ndetdata);
+		
+      // if printing a test population
+      if (runargs.testpop)
+	{
+	  FILE *fptr = fopen("population_test.txt","w");
+	  for ( i=0; i<runargs.datapopsize; i++)
+	    {
+	      for ( j=0; j<NINPUTS; j++ )
+		{
+		  fprintf(fptr, "%lf ", datapop[i*NINPUTS+j]);
+		}
+	      fprintf(fptr, "%lf\n", dataprob[i]);
+	    }
+	  fclose(fptr);
 	}
-	
-	if (runargs.vary_z1) ndims++;
-	if (runargs.vary_z1) nClsPar++;
-	if (runargs.vary_z2) ndims++;
-	if (runargs.vary_z2) nClsPar++;
-	
-	int updInt = 50;				// after how many iterations feedback is required & the output files should be updated
-							// note: posterior files are updated & dumper routine is called after every updInt*10 iterations
-	
-	double Ztol = -1E90;				// all the modes with logZ < Ztol are ignored
-	
-	int maxModes = 1;				// expected max no. of modes (used only for memory allocation)
-	
-	int pWrap[ndims];				// which parameters to have periodic boundary conditions?
-	for(i = 0; i < ndims; i++) pWrap[i] = 0;
-	
-	strcpy(root, outroot);			// root for output files
-	strcpy(networkinputs, "net.inp");			// file with input parameters for network training
-	
-	int seed = -1;					// random no. generator seed, if < 0 then take the seed from system clock
-	
-	int fb = runargs.verbose;					// need feedback on standard output?
-	
-	resume = runargs.resume;					// resume from a previous job?
-	
-	int outfile = 1;				// write output files?
-	
-	int initMPI = 0;				// initialize MPI routines?, relevant only if compiling with MPI
-							// set it to F if you want your main program to handle MPI initialization
-	
-	logZero = -1E90;				// points with loglike < logZero will be ignored by MultiNest
-	
-	int maxiter = 0;				// max no. of iterations, a non-positive value means infinity. MultiNest will terminate if either it 
-							// has done max no. of iterations or convergence criterion (defined through tol) has been satisfied
-	
-	void *context = 0;				// not required by MultiNest, any additional information user wants to pass
-	
-	doBAMBI = 0;					// BAMBI?
+		
+      // free memory
+      free(datapop);
+      free(dataz);
+      free(dataprob);
 
-	useNN = 0;
+      double logLnew;
+      // calculate new logL function at true values
+      if (runargs.twobreak) {
+	logLnew = -1.0 * GRBRateIntegralTwoBreak(runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2);
+      } else {
+	logLnew = -1.0 * GRBRateIntegral(runargs.n0, runargs.n1, runargs.n2, runargs.z1);
+      }
+      if (runargs.twobreak) {
+	for (i = 0; i < ndetdata; i++)
+	  {
+	    logLnew += log(GRBRateTwoBreak(zdata[i], runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2));
+	  }
+      } else {
+	for (i = 0; i < ndetdata; i++)
+	  {
+	    logLnew += log(GRBRate(zdata[i], runargs.n0, runargs.n1, runargs.n2, runargs.z1));
+	  }
+      }
+      printf("New logL = %lf at true values\n", logLnew);
+
+      // save detected GRB redshifts
+      char datasavefile[200];
+      sprintf(datasavefile, "%sdetectedZdata.txt", outroot);
+      FILE *datasave = fopen(datasavefile, "w");
+      for (i = 0; i < ndetdata; i++)
+	{
+	  fprintf(datasave, "%lf\n", zdata[i]);
+	}
+      fclose(datasave);
+      printf("Detected GRB redshifts saved to %s\n", datasavefile);
+
+      // save injected true values
+      sprintf(datasavefile, "%sinjected_values.txt", outroot);
+      datasave = fopen(datasavefile, "w");
+      fprintf(datasave, "%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n%lf\n", runargs.n0, runargs.n1, runargs.n2, runargs.n3, runargs.z1, runargs.z2,
+	      runargs.n0 * pow(1.0 + runargs.z1, runargs.n1), all_sky_rate);
+      fclose(datasave);
+      printf("Injected values saved to %s\n", datasavefile);
+    }
+
+  if (runargs.testpop)
+    {
+#ifdef PARALLEL
+      MPI_Finalize();
+#endif
+      exit(0);
+    }
+
+  printf("Writing outputs to %s*\n", outroot);
+
+  // set the MultiNest sampling parameters
 	
-	// calling MultiNest
+  int mmodal = 0;					// do mode separation?
+	
+  int ceff = 0;					// run in constant efficiency mode?
+	
+  int nlive = runargs.nlive;				// number of live points
+	
+  double efr = 0.1;				// set the required efficiency
+	
+  double tol = 0.1;				// tol, defines the stopping criteria
 
-	nested::run(mmodal, ceff, nlive, tol, efr, ndims, nPar, nClsPar, maxModes, updInt, Ztol, root, seed, pWrap, fb, resume, outfile, initMPI,
-	logZero, maxiter, LogLike, dumper, bambi, context);
+  int ndims;
+  int nPar;
+  int nClsPar;
+  if (runargs.twobreak) {
+    ndims = 5;                            // dimensionality (no. of free parameters)
+    nPar = 11;				// total no. of parameters including free & derived parameters
+    nClsPar = 5;				// no. of parameters to do mode separation on
+  } else {
+    ndims = 3;				// dimensionality (no. of free parameters)
+    nPar = 9;				// total no. of parameters including free & derived parameters
+    nClsPar = 3;				// no. of parameters to do mode separation on
+  }
+	
+  if (runargs.vary_z1) ndims++;
+  if (runargs.vary_z1) nClsPar++;
+  if (runargs.vary_z2) ndims++;
+  if (runargs.vary_z2) nClsPar++;
+	
+  int updInt = 50;				// after how many iterations feedback is required & the output files should be updated
+  // note: posterior files are updated & dumper routine is called after every updInt*10 iterations
+	
+  double Ztol = -1E90;				// all the modes with logZ < Ztol are ignored
+	
+  int maxModes = 1;				// expected max no. of modes (used only for memory allocation)
+	
+  int pWrap[ndims];				// which parameters to have periodic boundary conditions?
+  for(i = 0; i < ndims; i++) pWrap[i] = 0;
+	
+  strcpy(root, outroot);			// root for output files
+  strcpy(networkinputs, "net.inp");			// file with input parameters for network training
+	
+  int seed = -1;					// random no. generator seed, if < 0 then take the seed from system clock
+	
+  int fb = runargs.verbose;					// need feedback on standard output?
+	
+  resume = runargs.resume;					// resume from a previous job?
+	
+  int outfile = 1;				// write output files?
+	
+  int initMPI = 0;				// initialize MPI routines?, relevant only if compiling with MPI
+  // set it to F if you want your main program to handle MPI initialization
+	
+  logZero = -1E90;				// points with loglike < logZero will be ignored by MultiNest
+	
+  int maxiter = 0;				// max no. of iterations, a non-positive value means infinity. MultiNest will terminate if either it 
+  // has done max no. of iterations or convergence criterion (defined through tol) has been satisfied
+	
+  void *context = 0;				// not required by MultiNest, any additional information user wants to pass
+	
+  doBAMBI = 0;					// BAMBI?
 
-	// clean up allocated variables
-	if (runargs.method == NEURALNET) delete GRBnn;
-	free(zdata);
-	free(sample);
-	free(detcount);
-	free(popcount);
-	unload_splines();
+  useNN = 0;
+	
+  // calling MultiNest
+
+  nested::run(mmodal, ceff, nlive, tol, efr, ndims, nPar, nClsPar, maxModes, updInt, Ztol, root, seed, pWrap, fb, resume, outfile, initMPI,
+	      logZero, maxiter, LogLike, dumper, bambi, context);
+
+  // clean up allocated variables
+  if (runargs.method == NEURALNET) delete GRBnn;
+  free(zdata);
+  free(sample);
+  free(detcount);
+  free(popcount);
+  unload_splines();
 	
 #ifdef PARALLEL
- 	MPI_Finalize();
+  MPI_Finalize();
 #endif
 }
 
