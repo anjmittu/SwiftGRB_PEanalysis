@@ -335,9 +335,9 @@ int main(int argc, char *argv[])
   runargs.n0 = 0.42;
   runargs.n1 = 2.07;
   runargs.n2 = -0.7;
-  runargs.n3 = 1;
+  runargs.n3 = -1;
   runargs.z1 = Z1DATA;
-  runargs.z2 = 5;
+  runargs.z2 = Z2DATA;
   runargs.popsize = 1000;
   runargs.datapopsize = 100;
   runargs.seed = 0;
@@ -389,7 +389,9 @@ Data Settings\n\
 --n0             n0 for generated simulated data (optional, default=0.42)\n\
 --n1             n1 for generated simulated data (optional, default=2.07)\n\
 --n2             n2 for generated simulated data (optional, default=-0.7)\n\
+--n3             n3 for generated simulated data (optional, default=-1)\n\
 --z1             z1 for generated simulated data (optional, default=3.60)\n\
+--z2             z2 for generated simulated data (optional, default=4.50)\n\
 --file           data file to be read in (optional for when seed=0)\n\
 \n\
 Model Settings\n\
@@ -399,6 +401,8 @@ Model Settings\n\
 --ntotal         use total intrinsic GRB pop size instead of rate at z=0\n\
 --flatn0         use flat prior (instead of log) on n0\n\
 --varyz1         allow z1 to vary from fixed 3.6\n\
+--varyz2         allow z2 to vary from fixed 4.5\n\
+--twobreak       add second break to redshift\n\
 \n";
       printf("%s",helpstr);
 #ifdef PARALLEL
