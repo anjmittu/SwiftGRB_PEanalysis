@@ -42,6 +42,7 @@ typedef struct RunOptions {
   bool vary_z1;
   bool vary_z2;
   bool twobreak;
+  bool logz;
 } RunArgs;
 
 // return an array of detected z from input array of z and detection prob, given a prob threshold

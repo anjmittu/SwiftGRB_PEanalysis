@@ -70,18 +70,26 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 	
 	  // z1 from Cube[4]
 	  if (runargs.vary_z1) {
-	    z1 = CubeToFlatPrior(Cube[4], 0.00, 10.0);
+	    if(runargs.logz) {
+	      z1 = CubeToLogPrior(Cube[4], 0.01, 10.0);
+	    } else {
+	      z1 = CubeToFlatPrior(Cube[4], 0.00, 10.0);
+	    }
 	  } else {
 	    z1 = Z1DATA;
 	  }
 
 	  if (runargs.vary_z2) {
-	    z2 = CubeToFlatPrior(Cube[5], 0.00, 10.0);;
+	    if(runargs.logz) {
+	      z2 = CubeToLogPrior(Cube[5], 0.01, 10.0);
+	    } else {
+	      z2 = CubeToFlatPrior(Cube[5], 0.00, 10.0);
+	    }
 	  } else {
 	    z2 = Z2DATA;
 	  }
 
-	  if (z1 >= z2) {
+	  if (z1 > z2) {
 	    double temp = z1;
 	    z1 = z2;
 	    z2 = temp;
@@ -94,7 +102,11 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 	  
 	  // z1 from Cube[3]
 	  if (runargs.vary_z1) {
-	    z1 = CubeToFlatPrior(Cube[3], 0.00, 10.0);
+	    if(runargs.logz) {
+	      z1 = CubeToLogPrior(Cube[3], 0.01, 10.0);
+	    } else {
+	      z1 = CubeToFlatPrior(Cube[3], 0.00, 10.0);
+	    }
 	  } else {
 	    z1 = Z1DATA;
 	  }
