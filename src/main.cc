@@ -149,9 +149,9 @@ void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
 		nstar = n0 * pow(1.0 + z1, n1);
 		// ntotal
 		if (runargs.twobreak) {
-		  ntotal = GRBNumberIntegralTwoBreak(1.0, n1, n2, n3, z1, z2);
+		  ntotal = GRBNumberIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
 		} else {
-		  ntotal = GRBNumberIntegral(1.0, n1, n2, z1);
+		  ntotal = GRBNumberIntegral(n0, n1, n2, z1);
 		}
 		
 	}

@@ -39,10 +39,10 @@ RunAnalysis("AB_",2)
 
 
 # plot posterior results
-cmd5 = 'python posterior_plotsOneBreak.py'
-cmd6 = 'python posterior_plotsOneBreak.py --outdir="Onebreak_logz_"'
-cmd7 = 'python posterior_plotsTwoBreak.py'
-cmd8 = 'python posterior_plotsTwoBreak.py --outdir="Twobreak_logz_"'
+cmd5 = 'python posterior_plots.py'
+cmd6 = 'python posterior_plots.py --outdir="Onebreak_logz_"'
+cmd7 = 'python posterior_plots.py'
+cmd8 = 'python posterior_plots.py --outdir="Twobreak_logz_"'
 
 os.system(cmd5)
 os.system(cmd6)
