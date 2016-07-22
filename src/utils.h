@@ -41,6 +41,7 @@ typedef struct RunOptions {
   MLmethod method;
   bool vary_z1;
   bool vary_z2;
+  bool vary_n0_only;
   bool twobreak;
   bool logz;
 } RunArgs;

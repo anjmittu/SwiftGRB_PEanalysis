@@ -51,128 +51,137 @@ double CubeToLogPrior(double r, double xmin, double xmax)
 
 /******************************************** getphysparams routine ****************************************************/
 
-void getphysparams(double *Cube, int &ndim, int &nPar, void *context)
-{
+void getphysparams(double *Cube, int &ndim, int &nPar, void *context) {
+  
   double n0, n1, n2, n3, nstar, ntotal, z1, z2;
   n3 = 0;
   z2 = 0;
 
-	// n1 from Cube[1]
-	n1 = CubeToFlatPrior(Cube[1], 0.00, 4.00);
+  // n1 from Cube[1]
+  n1 = CubeToFlatPrior(Cube[1], 0.00, 4.00);
 
-	if (runargs.twobreak) {
+  if (runargs.twobreak) {
 
-	  // n2 from Cube[2]
-	  n2 = CubeToFlatPrior(Cube[2], -6.00, 6.00);
+    if (runargs.vary_n0_only) {
+      n1 = 3.28;
+      n2 = -.26;
+      n3 = -8;
+      z1 = 1.04;
+      z2 = 4.48;
+    } else {
+
+      // n2 from Cube[2]
+      n2 = CubeToFlatPrior(Cube[2], -6.00, 6.00);
 	
-	  // n3 from Cube[3]
-	  n3 = CubeToFlatPrior(Cube[3], -10.00, 0.00);
+      // n3 from Cube[3]
+      n3 = CubeToFlatPrior(Cube[3], -10.00, 0.00);
 	
-	  // z1 from Cube[4]
-	  if (runargs.vary_z1) {
-	    if(runargs.logz) {
-	      z1 = CubeToLogPrior(Cube[4], 0.01, 10.0);
-	    } else {
-	      z1 = CubeToFlatPrior(Cube[4], 0.00, 10.0);
-	    }
-	  } else {
-	    z1 = Z1DATA;
-	  }
-
-	  if (runargs.vary_z2) {
-	    if(runargs.logz) {
-	      z2 = CubeToLogPrior(Cube[5], 0.01, 10.0);
-	    } else {
-	      z2 = CubeToFlatPrior(Cube[5], 0.00, 10.0);
-	    }
-	  } else {
-	    z2 = Z2DATA;
-	  }
-
-	  if (z1 > z2) {
-	    double temp = z1;
-	    z1 = z2;
-	    z2 = temp;
-	  }
-	  
-	  
+      // z1 from Cube[4]
+      if (runargs.vary_z1) {
+	if(runargs.logz) {
+	  z1 = CubeToLogPrior(Cube[4], 0.01, 10.0);
 	} else {
-	  // n2 from Cube[2]
-	  n2 = CubeToFlatPrior(Cube[2], -6.00, 0.00);
-	  
-	  // z1 from Cube[3]
-	  if (runargs.vary_z1) {
-	    if(runargs.logz) {
-	      z1 = CubeToLogPrior(Cube[3], 0.01, 10.0);
-	    } else {
-	      z1 = CubeToFlatPrior(Cube[3], 0.00, 10.0);
-	    }
-	  } else {
-	    z1 = Z1DATA;
-	  }
+	  z1 = CubeToFlatPrior(Cube[4], 0.00, 10.0);
 	}
+      } else {
+	z1 = Z1DATA;
+      }
 
-	// normalization parameters from Cube[0]
-	if (runargs.nstar) {
-		// nstar
-		nstar = CubeToLogPrior(Cube[0], 0.10, 10000.0);
-		// n0
-		n0 = nstar * pow(1.0 + z1, -n1);
-		if (runargs.twobreak) {
-		  // ntotal
-		  ntotal = GRBNumberIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
-		} else {
-		  // ntotal
-		  ntotal = GRBNumberIntegral(n0, n1, n2, z1);
-		}
-	} else if (runargs.ntotal) {
-		// ntotal
-		ntotal = CubeToLogPrior(Cube[0], 1.00, 1e5);
-		double ntmp;
-		if (runargs.twobreak) {
-		  ntmp = GRBNumberIntegralTwoBreak(1.0, n1, n2, n3, z1, z2);
-		} else {
-		  ntmp = GRBNumberIntegral(1.0, n1, n2, z1);
-		}
-		// n0
-		n0 = ntotal / ntmp;
-		// nstar
-		nstar = n0 * pow(1.0 + z1, n1);
+      if (runargs.vary_z2) {
+	if(runargs.logz) {
+	  z2 = CubeToLogPrior(Cube[5], 0.01, 10.0);
 	} else {
-		// n0
-		if (runargs.flatn0) {
-			n0 = CubeToFlatPrior(Cube[0], 0.01, 2.00);
-		} else {
-			n0 = CubeToLogPrior(Cube[0], 0.01, 2.00);
-		}
-		// nstar
-		nstar = n0 * pow(1.0 + z1, n1);
-		// ntotal
-		if (runargs.twobreak) {
-		  ntotal = GRBNumberIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
-		} else {
-		  ntotal = GRBNumberIntegral(n0, n1, n2, z1);
-		}
+	  z2 = CubeToFlatPrior(Cube[5], 0.00, 10.0);
+	}
+      } else {
+	z2 = Z2DATA;
+      }
+
+      if (z1 > z2) {
+	double temp = z1;
+	z1 = z2;
+	z2 = temp;
+      }
+    }
+	  
+	  
+  } else {
+    // n2 from Cube[2]
+    n2 = CubeToFlatPrior(Cube[2], -6.00, 0.00);
+	  
+    // z1 from Cube[3]
+    if (runargs.vary_z1) {
+      if(runargs.logz) {
+	z1 = CubeToLogPrior(Cube[3], 0.01, 10.0);
+      } else {
+	z1 = CubeToFlatPrior(Cube[3], 0.00, 10.0);
+      }
+    } else {
+      z1 = Z1DATA;
+    }
+  }
+
+  // normalization parameters from Cube[0]
+  if (runargs.nstar) {
+    // nstar
+    nstar = CubeToLogPrior(Cube[0], 0.10, 10000.0);
+    // n0
+    n0 = nstar * pow(1.0 + z1, -n1);
+    if (runargs.twobreak) {
+      // ntotal
+      ntotal = GRBNumberIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
+    } else {
+      // ntotal
+      ntotal = GRBNumberIntegral(n0, n1, n2, z1);
+    }
+  } else if (runargs.ntotal) {
+    // ntotal
+    ntotal = CubeToLogPrior(Cube[0], 1.00, 1e5);
+    double ntmp;
+    if (runargs.twobreak) {
+      ntmp = GRBNumberIntegralTwoBreak(1.0, n1, n2, n3, z1, z2);
+    } else {
+      ntmp = GRBNumberIntegral(1.0, n1, n2, z1);
+    }
+    // n0
+    n0 = ntotal / ntmp;
+    // nstar
+    nstar = n0 * pow(1.0 + z1, n1);
+  } else {
+    // n0
+    if (runargs.flatn0) {
+      n0 = CubeToFlatPrior(Cube[0], 0.01, 2.00);
+    } else {
+      n0 = CubeToLogPrior(Cube[0], 0.01, 2.00);
+    }
+    // nstar
+    nstar = n0 * pow(1.0 + z1, n1);
+    // ntotal
+    if (runargs.twobreak) {
+      ntotal = GRBNumberIntegralTwoBreak(n0, n1, n2, n3, z1, z2);
+    } else {
+      ntotal = GRBNumberIntegral(n0, n1, n2, z1);
+    }
 		
-	}
+  }
 
-	if (runargs.twobreak) {
-	  Cube[0] = n0;
-	  Cube[1] = n1;
-	  Cube[2] = n2;
-	  Cube[3] = n3;
-	  Cube[4] = z1;
-	  Cube[5] = z2;
-	  Cube[6] = nstar;
-	  Cube[7] = ntotal;
-	} else {
-	  Cube[0] = n0;
-	  Cube[1] = n1;
-	  Cube[2] = n2;
-	  Cube[3] = z1;
-	  Cube[4] = nstar;
-	  Cube[5] = ntotal;
-	}
+  if (runargs.twobreak) {
+    Cube[0] = n0;
+    Cube[1] = n1;
+    Cube[2] = n2;
+    Cube[3] = n3;
+    Cube[4] = z1;
+    Cube[5] = z2;
+    Cube[6] = nstar;
+    Cube[7] = ntotal;
+  } else {
+    Cube[0] = n0;
+    Cube[1] = n1;
+    Cube[2] = n2;
+    Cube[3] = z1;
+    Cube[4] = nstar;
+    Cube[5] = ntotal;
+  }
 }
 
 /******************************************** getallparams routine ****************************************************/
