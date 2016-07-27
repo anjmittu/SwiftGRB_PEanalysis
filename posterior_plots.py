@@ -209,7 +209,7 @@ if (not args.twobreak):
         plotRzPost('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
                    'support_data/FynboGRB_lum_z_Zonly.txt',
                    './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
-                   title = 'Real Data'+modelname)
+                   title = 'Real Data')
            
         
 else:
@@ -236,7 +236,7 @@ else:
         figure = triangle.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$n_3$', r'$z_1$', r'$z_2$', r'$N_{\rm tot}$'],
                                  bins=50, quantiles=[0.05, 0.5, 0.95], show_titles=True, levels=levels,
                                  title_args={"fontsize": 14}, verbose=False, smooth1d=1, smooth=1,
-                                 range=[(0,1.6),(0.7,3.2),(-6,6),(-6,0),(1.,10),(1.,10),(1500,10000)],
+                                 range=[(0,1.6),(0.7,3.2),(-6,6),(-10,0),(1.,10),(1.,10),(1500,10000)],
                                  maxlike=args.maxlike, label_kwargs={"fontsize": 20})
         figure.savefig('./plots/RD_'+modelname+'_'+args.outdir+'posterior.png')
         plt.close(figure)
@@ -244,6 +244,6 @@ else:
         plotRzPostTwoBreak('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
                            'support_data/FynboGRB_lum_z_Zonly.txt',
                            './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
-                           title = 'Real Data'+modelname)
+                           title = 'Real Data')
         
 

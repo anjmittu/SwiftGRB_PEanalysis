@@ -695,9 +695,15 @@ Model Settings\n\
   int nPar;
   int nClsPar;
   if (runargs.twobreak) {
-    ndims = 5;                            // dimensionality (no. of free parameters)
-    nPar = 11;				// total no. of parameters including free & derived parameters
-    nClsPar = 5;				// no. of parameters to do mode separation on
+    if (runargs.vary_n0_only) {
+      ndims = 2;
+      nPar = 11;
+      nClsPar = 2;
+    } else {
+      ndims = 5;                            // dimensionality (no. of free parameters)
+      nPar = 11;				// total no. of parameters including free & derived parameters
+      nClsPar = 5;				// no. of parameters to do mode separation on
+    }
   } else {
     ndims = 3;				// dimensionality (no. of free parameters)
     nPar = 9;				// total no. of parameters including free & derived parameters
