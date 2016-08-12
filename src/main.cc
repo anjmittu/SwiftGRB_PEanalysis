@@ -423,7 +423,9 @@ Model Settings\n\
 --flatn0         use flat prior (instead of log) on n0\n\
 --varyz1         allow z1 to vary from fixed 3.6\n\
 --varyz2         allow z2 to vary from fixed 4.5\n\
+--vary_n0_only   fix all parameters except n0
 --twobreak       add second break to redshift\n\
+--logz           use log prior for z
 \n";
       printf("%s",helpstr);
 #ifdef PARALLEL

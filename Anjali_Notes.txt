@@ -1,0 +1,40 @@
+Changes to files:
+scr/utils.h 		-> added run arguments to type runargs (utils.h)
+
+scr/main.cc	    	-> added two break option
+			-> all added arguments are explained in --help
+
+scr/poputils.c 		-> added two breaK option
+
+
+
+
+New files:
+analysis_pipeline.py	-> script to run ./Analysis with various parameters
+
+data_stats.py		-> prints 90% CI
+
+posterior_plots.py	-> creates posterior and model distribution plots
+			   run arguments explained in --help
+
+posterior_plotsOld.py	-> from Graff
+
+pp_pipeline.py		-> script to run posterior_plots.py with various parameters
+
+pp_pipelineOld.py	-> from Graff
+
+sfr_GRB_test.py		-> plot from Amy
+
+
+
+
+Example commands:
+
+~% ./Analysis --file=support_data/FynboGRB_lum_z_Zonly.txt --method=1 --nlive=3000 --varyz1 --outfile=./chains/RD_RF_OneBreak_
+~% python posterior_plots.py -ml .49 1.68 -2.73 6.82 4519 -m 1
+
+~% ./Analysis --file=support_data/FynboGRB_lum_z_Zonly.txt --method=1 --nlive=3000 --varyz1 --varyz2 --outfile=./chains/RD_RF_TwoBreak_ --twobreak   
+~% python posterior_plots.py --outdir="Twobreak_" -ml .48 1.69 .42 -4.89 5.46 7.95 4459 -m 1 -tb
+
+
+
