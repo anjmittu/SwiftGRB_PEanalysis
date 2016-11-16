@@ -6,8 +6,8 @@ import os
 import pickle
 
 Nenc = 0
-Ntrees = 100
-cv=True
+Ntrees = 500
+cv=False
 
 # read in prior training data
 filename = "newdata/test_sample_prior12_combined.txt"
@@ -44,7 +44,7 @@ if cv:
 	RF1 = ensemble.RandomForestClassifier(n_estimators=Ntrees,min_samples_split=clf.best_params_['min_samples_split'],max_features=clf.best_params_['max_features'])
 	RF2 = ensemble.AdaBoostClassifier(tree.DecisionTreeClassifier(min_samples_split=clf.best_params_['min_samples_split'],max_features=clf.best_params_['max_features']),n_estimators=Ntrees)
 else:
-	RF1 = ensemble.RandomForestClassifier(n_estimators=Ntrees,min_samples_split=4,max_features=8)
+	RF1 = ensemble.RandomForestClassifier(n_estimators=Ntrees,min_samples_split=4,max_features=5)
 	RF2 = ensemble.AdaBoostClassifier(tree.DecisionTreeClassifier(min_samples_split=4,max_features=8),n_estimators=Ntrees)
 RF1.fit(xtrain,ytrain)
 RF2.fit(xtrain,ytrain)
@@ -76,7 +76,7 @@ else:
 RF3.fit(xtrain,ytrain)
 print '\nExample tree score = ',RF3.score(xtest,ytest),'\n'
 tree_out = tree.export_graphviz(RF3,out_file="tree.dot",feature_names=getNames(15+Nenc))
-#tree_out.close()  *** I commented this out *** - Anjali
+#tree_out.close()
 os.system('dot -Tpng tree.dot -o tree.png')
 
 # read in evaluation data and calculate scores
@@ -98,7 +98,7 @@ for i in range(len(newdists)):
 
 
 # save best trees
-savefile1 = open('RandomForest_best.pkl','w')
+savefile1 = open('RandomForest_500tree_4_5.pkl','w')
 savefile2 = open('AdaBoost_best.pkl','w')
 pickle.dump(RF1,savefile1)
 pickle.dump(RF2,savefile2)
