@@ -201,6 +201,7 @@ R_GRB_z_bestlow_array = []
 R_GRB_z_besthi_array = []
 One_R_GRB_z_array = []
 Two_R_GRB_z_array = []
+Perley_GRB_z_array = []
 Zero_R_GRB_z_array = []
 ZeroHigh_R_GRB_z_array = []
 ZeroLow_R_GRB_z_array = []
@@ -215,8 +216,12 @@ for i in range(0,i_max+1):
 	R_GRB_test_z = R_GRB_test(z)
 	R_GRB_bestlow_z = R_GRB_bestlow(z)
 	R_GRB_besthi_z = R_GRB_besthi(z)
-        One_R_GRB_z = Rz(z,[.513, 1.656, -5.997, 6.70, 4434])
-        Two_R_GRB_z = RzTwoBreak(z, [.411, 1.878, .978, -8.804, 3.403, 6.600, 3919])
+        #One_R_GRB_z = Rz(z,[.513, 1.656, -5.997, 6.70, 4434])
+        One_R_GRB_z = Rz(z,[.74, 1.68, -2.73, 6.82, 4434])
+        #Two_R_GRB_z = RzTwoBreak(z, [.411, 1.878, .978, -8.804, 3.403, 6.600, 3919])
+        Two_R_GRB_z = RzTwoBreak(z, [.72, 1.69, .42, -4.89, 5.46, 7.96, 4460])
+        #Perley_GRB_z = Rz(z, [1.15, 1.39, -5.88, 5.44, 5294])
+        Perley_GRB_z = Rz(z, [1.05, 1.37, -2.95, 6.01, 6190])
         Zero_R_GRB_z = RzTwoBreak(z, [.331, 3.28, -.26, -8, 1.04, 4.48, 1762])
         ZeroHigh_R_GRB_z = RzTwoBreak(z, [.401, 3.28, -.26, -8, 1.04, 4.48, 1762])
         ZeroLow_R_GRB_z = RzTwoBreak(z, [.271, 3.28, -.26, -8, 1.04, 4.48, 1762])
@@ -233,6 +238,7 @@ for i in range(0,i_max+1):
 	sfr_hopkins06_z_array.append(sfr_hopkins06_z)
 	One_R_GRB_z_array.append(One_R_GRB_z)
         Two_R_GRB_z_array.append(Two_R_GRB_z)
+        Perley_GRB_z_array.append(Perley_GRB_z)
         Zero_R_GRB_z_array.append(Zero_R_GRB_z)
         ZeroHigh_R_GRB_z_array.append(ZeroHigh_R_GRB_z)
         ZeroLow_R_GRB_z_array.append(ZeroLow_R_GRB_z)
@@ -261,6 +267,7 @@ plt.plot(z_array,R_GRB_z_bestlow_array,'r:')
 plt.fill_between(z_array,R_GRB_z_besthi_array,R_GRB_z_bestlow_array,color='r',alpha=0.25)
 #plt.plot(z_array,R_GRB_z_test_array,'k',label='GRB Rate test')
 plt.plot(z_array,One_R_GRB_z_array,'black',linewidth=1.5,label='GRB Rate from this research (One-Break)')
+plt.plot(z_array,Perley_GRB_z_array,'orange',linewidth=1.5,label='GRB Rate from this perley (One-Break)')
 plt.plot(z_array,Two_R_GRB_z_array,'yellow',linewidth=1.5,label='GRB Rate from this research (Two-Break)')
 plt.plot(z_array,Zero_R_GRB_z_array,'cyan',linewidth=1.5,label='GRB Rate from this research (using parameters from Hopkins & Beacom 2006)')
 plt.plot(z_array,ZeroHigh_R_GRB_z_array,'c:')

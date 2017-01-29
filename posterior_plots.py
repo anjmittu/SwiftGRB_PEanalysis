@@ -153,6 +153,7 @@ parser.add_argument("-s","--seed",action="store",type=int,default=-1,help="Numbe
 parser.add_argument("-o","--outdir",action="store",type=str,default="Onebreak_",help="Directory for analyses' output")
 parser.add_argument("-tb","--twobreak",action="store_true",default=False,dest="twobreak")
 parser.add_argument("-ml","--maxlike",default=[], type=float, nargs='+',help="The max likelihood")
+parser.add_argument("-f","--fynbo",action="store",type=int,default=1,help="Which real data set to use")
 parser.add_argument("-m", "--model", default=0,type=int, help="The machine learning model")
 args = parser.parse_args()
 
@@ -205,11 +206,17 @@ if (not args.twobreak):
                                  maxlike=args.maxlike, label_kwargs={"fontsize": 20})
         figure.savefig('./plots/RD_'+modelname+'_'+args.outdir+'posterior.png')
         plt.close(figure)
-        
-        plotRzPost('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
-                   'support_data/FynboGRB_lum_z_Zonly.txt',
-                   './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
-                   title = 'Real Data')
+
+        if (args.fynbo == 1):
+            plotRzPost('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
+                       'support_data/FynboGRB_lum_z_Zonly.txt',
+                       './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
+                       title = 'Real Data')
+        else:
+            plotRzPost('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
+                       'support_data/PerleyGRB_sub_z.txt',
+                       './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
+                       title = 'Real Data')
            
         
 else:
@@ -240,10 +247,16 @@ else:
                                  maxlike=args.maxlike, label_kwargs={"fontsize": 20})
         figure.savefig('./plots/RD_'+modelname+'_'+args.outdir+'posterior.png')
         plt.close(figure)
-        
-        plotRzPostTwoBreak('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
-                           'support_data/FynboGRB_lum_z_Zonly.txt',
-                           './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
-                           title = 'Real Data')
-        
+
+        if (args.fynbo == 1):
+            plotRzPostTwoBreak('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
+                               'support_data/FynboGRB_lum_z_Zonly.txt',
+                               './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
+                               title = 'Real Data')
+        else:
+            plotRzPostTwoBreak('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
+                               'support_data/PerleyGRB_all_z.txt',
+                               './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
+                               title = 'Real Data')
+            
 

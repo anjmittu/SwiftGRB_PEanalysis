@@ -9,6 +9,7 @@ fl = np.loadtxt('support_data/splines_detection_fraction_z_flux.txt')
 z = nn[:,0]
 an = np.piecewise(z, [z<=5.96,z>5.96], [lambda x: -0.01+1.02*np.exp(-x/1.68), lambda x: 0.02])
 
+'''
 data1 = np.loadtxt('../traindata/Swift_train_all.txt', usecols=(2,26))
 data2 = np.loadtxt('../traindata/Swift_validate_all.txt', usecols=(2,26))
 data = np.vstack((data1,data2))
@@ -17,7 +18,7 @@ detect, bin_edges_2 = np.histogram(data[data[:,1]==1.0,0], density=False, range=
 td = 1.0 * detect / total
 bin_centers = (bin_edges_1[:-1] + bin_edges_1[1:]) / 2.0
 tderr = 1.0 * np.minimum(np.sqrt(detect),np.ones(detect.shape)) / total
-
+'''
 
 fig,ax = plt.subplots(1,3)
 
@@ -47,7 +48,7 @@ ax[2].grid()
 
 plt.show()
 
-
+'''
 fig,ax = plt.subplots(1)
 ax.errorbar(bin_centers,td,fmt=u'-m',lw=2,label="Data")
 ax.plot(nn[:,0],nn[:,1],'-k',lw=2,label="NN")
@@ -65,4 +66,4 @@ ax.xaxis.set_major_locator(MultipleLocator(1))
 ax.xaxis.set_minor_locator(MultipleLocator(0.25))
 plt.show()
 fig.savefig('../../paper/figures/detection_fraction.png', bbox_inches='tight', pad_inches=0.05, dpi=200)
-
+'''

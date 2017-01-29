@@ -204,7 +204,7 @@ Data Settings\n\
 	if (myid == 0)
 	{
 		// open file for outputs
-	  FILE *outfile = fopen("support_data/splines_detection_fraction_z_RF_500tree_zpt10001.txt", "w");  /*** Changed -Anj ***/
+	  FILE *outfile = fopen("support_data/splines_detection_fraction_z_RF_2_LargeBin.txt", "w");  /*** Changed -Anj ***/
 
 		// write results
 		for (i = 0; i < runargs.zpts; i++)
