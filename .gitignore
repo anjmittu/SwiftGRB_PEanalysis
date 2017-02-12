@@ -28,3 +28,5 @@
 
 RandomForest_best2.pkl
 AdaBoost_best.pkl
+
+*.pkl
