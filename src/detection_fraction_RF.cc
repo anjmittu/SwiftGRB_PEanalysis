@@ -100,7 +100,7 @@ Data Settings\n\
 	{
 		dataseed = -34712 * (long int) time(NULL);
 	} else {
-		dataseed = -34712 * runargs.seed;	
+		dataseed = -34712 * runargs.seed;
 	}
 
 	// read in values for the background possibilities of simulated GRBs
@@ -173,12 +173,12 @@ Data Settings\n\
 		detected(dataz, dataprob, runargs.datapopsize, 0.5, zdata, &ndetdata);
 
 		detfrac[k] = (double) ndetdata / (double) runargs.datapopsize;
-		
+
 		printf("Simulated %ld GRBs (%ld detected) at z=%g : %g%%\n", runargs.datapopsize, ndetdata, z[k], detfrac[k]*100.0);
 
 		// clear data files
 		sprintf(command, "rm -f %s %s", outfilename, infilename);
-		system(command);	
+		system(command);
 	}
 
 	// collect all results at root node
@@ -199,12 +199,12 @@ Data Settings\n\
 		}
 	}
 #endif
-	
+
 	// write results to file
 	if (myid == 0)
 	{
 		// open file for outputs
-	  FILE *outfile = fopen("support_data/splines_detection_fraction_z_RF_2_LargeBin.txt", "w");  /*** Changed -Anj ***/
+	  FILE *outfile = fopen("support_data/splines_detection_fraction_RF_v2.txt", "w");  /*** Changed -Anj ***/
 
 		// write results
 		for (i = 0; i < runargs.zpts; i++)
@@ -213,9 +213,9 @@ Data Settings\n\
 		}
 
 		// close the file
-		fclose(outfile);	
+		fclose(outfile);
 	}
-	
+
 	// clean up allocated variables
 	free(z);
 	free(detfrac);
@@ -232,4 +232,3 @@ Data Settings\n\
 
 	return 0;
 }
-

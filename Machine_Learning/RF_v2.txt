@@ -1,0 +1,54 @@
+[Parallel(n_jobs=-1)]: Done 240 out of 240 | elapsed: 233.7min finished
+{'min_samples_split': 4, 'max_depth': 6} 0.955454560237
+{'min_samples_split': 8, 'max_depth': 6} 0.955202523618
+{'min_samples_split': 12, 'max_depth': 6} 0.95497487764
+{'min_samples_split': 16, 'max_depth': 6} 0.955291955967
+{'min_samples_split': 20, 'max_depth': 6} 0.955340737248
+{'min_samples_split': 24, 'max_depth': 6} 0.954999268281
+{'min_samples_split': 28, 'max_depth': 6} 0.955235044472
+{'min_samples_split': 32, 'max_depth': 6} 0.955259435113
+{'min_samples_split': 4, 'max_depth': 8} 0.964357144019
+{'min_samples_split': 8, 'max_depth': 8} 0.964194539749
+{'min_samples_split': 12, 'max_depth': 8} 0.96408071676
+{'min_samples_split': 16, 'max_depth': 8} 0.964153888681
+{'min_samples_split': 20, 'max_depth': 8} 0.964202669962
+{'min_samples_split': 24, 'max_depth': 8} 0.9641051074
+{'min_samples_split': 28, 'max_depth': 8} 0.963853070782
+{'min_samples_split': 32, 'max_depth': 8} 0.963771768647
+{'min_samples_split': 4, 'max_depth': 10} 0.972739394136
+{'min_samples_split': 8, 'max_depth': 10} 0.972389794956
+{'min_samples_split': 12, 'max_depth': 10} 0.972219060473
+{'min_samples_split': 16, 'max_depth': 10} 0.972048325989
+{'min_samples_split': 20, 'max_depth': 10} 0.971796289371
+{'min_samples_split': 24, 'max_depth': 10} 0.971625554887
+{'min_samples_split': 28, 'max_depth': 10} 0.971381648482
+{'min_samples_split': 32, 'max_depth': 10} 0.971162132718
+{'min_samples_split': 4, 'max_depth': 12} 0.979097221093
+{'min_samples_split': 8, 'max_depth': 12} 0.978706970845
+{'min_samples_split': 12, 'max_depth': 12} 0.978406152946
+{'min_samples_split': 16, 'max_depth': 12} 0.977690694158
+{'min_samples_split': 20, 'max_depth': 12} 0.977398006472
+{'min_samples_split': 24, 'max_depth': 12} 0.977227271988
+{'min_samples_split': 28, 'max_depth': 12} 0.976682547684
+{'min_samples_split': 32, 'max_depth': 12} 0.976357339144
+{'min_samples_split': 4, 'max_depth': 14} 0.981349290232
+{'min_samples_split': 8, 'max_depth': 14} 0.980942779557
+{'min_samples_split': 12, 'max_depth': 14} 0.980463096961
+{'min_samples_split': 16, 'max_depth': 14} 0.980137888421
+{'min_samples_split': 20, 'max_depth': 14} 0.979706987105
+{'min_samples_split': 24, 'max_depth': 14} 0.979292346217
+{'min_samples_split': 28, 'max_depth': 14} 0.978942747037
+{'min_samples_split': 32, 'max_depth': 14} 0.978487455081
+{'min_samples_split': 4, 'max_depth': 16} 0.982072879234
+{'min_samples_split': 8, 'max_depth': 16} 0.981495634075
+{'min_samples_split': 12, 'max_depth': 16} 0.981032211906
+{'min_samples_split': 16, 'max_depth': 16} 0.980812696141
+{'min_samples_split': 20, 'max_depth': 16} 0.980284232264
+{'min_samples_split': 24, 'max_depth': 16} 0.980105367567
+{'min_samples_split': 28, 'max_depth': 16} 0.979552513049
+{'min_samples_split': 32, 'max_depth': 16} 0.979349257712
+
+Random Forest cross-validation best params:  {'min_samples_split': 4, 'max_depth': 16}
+RF score on train data           = 0.995495861721
+RF score on validation data      = 0.968147498989
+RF score on full validation data = 0.976377362264

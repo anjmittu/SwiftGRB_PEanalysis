@@ -58,7 +58,7 @@ if opts.RF:
 
 	# create and fit the model
 	basemod = ensemble.RandomForestClassifier(n_estimators=Ntrees, max_features=nfeats)
-	RF = grid_search.GridSearchCV(basemod, grid_pars, verbose=2, cv=5, n_jobs=-1, pre_dispatch='2*n_jobs')
+	RF = grid_search.GridSearchCV(basemod, grid_pars, verbose=2, cv=5, n_jobs=4)
 	RF.fit(xall,yall)
 	for estim in RF.grid_scores_:
 		print estim.parameters, estim.mean_validation_score
@@ -67,12 +67,12 @@ if opts.RF:
 	print 'RF score on validation data      =', RF.best_estimator_.score(xval,yval)
 	print 'RF score on full validation data =', RF.best_estimator_.score(xval2,yval2)
 
-	#savefile1a = open('RandomForest_v2_fit.pkl','w')
-	#pickle.dump(RF.best_estimator_,savefile1a)
-	#savefile1a.close()
-	#savefile1b = open('RandomForest_v2_grid.pkl','w')
-	#pickle.dump(RF,savefile1b)
-	#savefile1b.close()
+	savefile1a = open('RandomForest_v2_fit.pkl','w')
+	pickle.dump(RF.best_estimator_,savefile1a)
+	savefile1a.close()
+	savefile1b = open('RandomForest_v2_grid.pkl','w')
+	pickle.dump(RF,savefile1b)
+	savefile1b.close()
 
 if opts.RF2:
 	# setup optimal RF parameters
