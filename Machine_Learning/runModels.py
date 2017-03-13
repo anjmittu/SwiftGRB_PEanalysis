@@ -1,6 +1,12 @@
 from MLutils import *
 
 from optparse import OptionParser
+import numpy as np
+from sklearn import tree,preprocessing,grid_search,cross_validation,ensemble
+import os
+import pickle
+import math
+
 parser=OptionParser()
 
 parser.add_option("--RF",action="store_true",default=False,help="train Random Forest classifier")
@@ -28,7 +34,8 @@ def writeNetwork(nh,act):
 #---------------------------------------------------------------
 
 # read in prior training data
-filename = "newdata/Swift_train_all.txt"
+#filename = "newdata/Swift_train_all.txt"
+filename = "newdata/Swift_new_data.txt"
 xall,yall = readdata(filename,0)
 
 # shuffle the data
