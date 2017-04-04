@@ -158,7 +158,7 @@ Data Settings\n\
 
 		// run python script for RF
 		char command[200];
-		sprintf(command, "python evalRF.py %s %s", outfilename, infilename);
+		sprintf(command, "python2 evalRF.py %s %s", outfilename, infilename);
 		system(command);
 
 		// collect results
@@ -204,7 +204,7 @@ Data Settings\n\
 	if (myid == 0)
 	{
 		// open file for outputs
-	  FILE *outfile = fopen("support_data/splines_detection_fraction_RF_v2_z10000.txt", "w");  /*** Changed -Anj ***/
+	  FILE *outfile = fopen("support_data/splines_detection_fraction_RF_old_and_new_z10000.txt", "w");  /*** Changed -Anj ***/
 
 		// write results
 		for (i = 0; i < runargs.zpts; i++)

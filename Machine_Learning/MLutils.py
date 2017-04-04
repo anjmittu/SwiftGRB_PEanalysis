@@ -100,6 +100,13 @@ def PrintPredictions(filename,x,yt,yp,method='forest',sep='\t'):
             ofp.write(repr(yt[i])+sep+repr(yp[i])+'\n')
     ofp.close()
 
+def PrintPredictionsKS(filename,z,yt,yp,sep=' '):
+    nd = z.shape[0]
+    ofp=open(filename,'w')
+    for i in range(nd):
+        ofp.write(repr(z[i])+sep+repr(yt[i])+sep+repr(yp[i][1])+'\n')
+    ofp.close()
+
 def getNames(N):
     names = ['log_L', 'z', 'det_r', 'det_phi', 'bin_size_emit', 'alpha', 'beta', 'E_peak', 'bgd_15-25keV', 'bgd_15-50keV', \
     'bgd25-100keV', 'bgd50-350keV', 'theta', 'flux', 'ndet', 'encLC1', 'encLC2', 'encLC3', 'encLC4', 'encLC5', 'encLC6', \

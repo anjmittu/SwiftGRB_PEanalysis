@@ -64,8 +64,8 @@ if opts.RF:
 	print '\nRandom Forest cross-validation best params: ',RF.best_params_
 	print 'Score = ',RF.score(xall,yall),'\n'
 
-	savefile1a = open('RandomForest_grid.pkl','w')
-	savefile1b = open('RandomForest_best.pkl','w')
+	savefile1a = open('RandomForest_grid_newData.pkl','w')
+	savefile1b = open('RandomForest_best_newData.pkl','w')
 	pickle.dump(RF,savefile1a)
 	pickle.dump(RF.best_estimator_,savefile1b)
 	savefile1a.close()
