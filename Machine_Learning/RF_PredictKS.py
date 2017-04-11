@@ -14,17 +14,35 @@ xallnew,yallnew = readdata(filenamenew,0)
 filenamemix = "newdata/Swift_new_data.txt"
 xallmix,yallmix = readdata(filenamemix,0)
 
-xtrain,xtest,ytrain,ytest = cross_validation.train_test_split(xallmix,yallmix,test_size=0.20)
+RF1 = ensemble.RandomForestClassifier(n_estimators=500,min_samples_split=8,max_features=13)
+RF1.fit(xallmix,yallmix)
 
-RF = ensemble.RandomForestClassifier(n_estimators=500,min_samples_split=8,max_features=13)
-RF.fit(xtrain,ytrain)
+RF2 = ensemble.RandomForestClassifier(n_estimators=500,min_samples_split=8,max_features=3)
+RF2.fit(xallold,yallold)
 
-score = RF.score(xtest,ytest)
-ypredold = RF.predict_proba(xallold)
-yprednew = RF.predict_proba(xallnew)
-ypredmix = RF.predict_proba(xallmix)
+RF3 = ensemble.RandomForestClassifier(n_estimators=500,min_samples_split=16,max_features=9)
+RF3.fit(xallnew,yallnew)
 
-print 'Random Forest testing = ',score
-PrintPredictionsKS('RandomForest_predictionsKSold.txt',xallold[:,1],yallold,ypredold)
-PrintPredictionsKS('RandomForest_predictionsKSnew.txt',xallnew[:,1],yallnew,yprednew)
-PrintPredictionsKS('RandomForest_predictionsKSmix.txt',xallmix[:,1],yallmix,ypredmix)
+ypredold1 = RF1.predict_proba(xallold)
+yprednew1 = RF1.predict_proba(xallnew)
+ypredmix1 = RF1.predict_proba(xallmix)
+
+ypredold2 = RF2.predict_proba(xallold)
+yprednew2 = RF2.predict_proba(xallnew)
+ypredmix2 = RF2.predict_proba(xallmix)
+
+ypredold3 = RF3.predict_proba(xallold)
+yprednew3 = RF3.predict_proba(xallnew)
+ypredmix3 = RF3.predict_proba(xallmix)
+
+PrintPredictionsKS('RandomForest_predictionsKS_trainmix_testold.txt',xallold[:,1],yallold,ypredold1)
+PrintPredictionsKS('RandomForest_predictionsKS_trainmix_testnew.txt',xallnew[:,1],yallnew,yprednew1)
+PrintPredictionsKS('RandomForest_predictionsKS_trainmix_testmix.txt',xallmix[:,1],yallmix,ypredmix1)
+
+PrintPredictionsKS('RandomForest_predictionsKS_trainold_testold.txt',xallold[:,1],yallold,ypredold2)
+PrintPredictionsKS('RandomForest_predictionsKS_trainold_testnew.txt',xallnew[:,1],yallnew,yprednew2)
+PrintPredictionsKS('RandomForest_predictionsKS_trainold_testmix.txt',xallmix[:,1],yallmix,ypredmix2)
+
+PrintPredictionsKS('RandomForest_predictionsKS_trainnew_testold.txt',xallold[:,1],yallold,ypredold3)
+PrintPredictionsKS('RandomForest_predictionsKS_trainnew_testnew.txt',xallnew[:,1],yallnew,yprednew3)
+PrintPredictionsKS('RandomForest_predictionsKS_trainnew_testmix.txt',xallmix[:,1],yallmix,ypredmix3)

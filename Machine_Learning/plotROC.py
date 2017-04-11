@@ -8,22 +8,48 @@ from matplotlib.ticker import MultipleLocator
 
 Nenc = 0
 Ntrees = 500
-colors = ["k","b","g","m","y"]
+colors = ["k","b","g","m","y","r","c", '#eeefff', '#888fff']
 unif = np.logspace(-5,0,num=100)
 
 fig, ax = plt.subplots(1)
 
-d = np.loadtxt("RandomForest_predictionsKSold.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainmix_testold.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
-ax.plot(fpr, tpr, '-', color=colors[0], label="Just old", lw=2)
+ax.plot(fpr, tpr, '-', color=colors[0], label="Trained on mix; tested on old", lw=2)
 
-d = np.loadtxt("RandomForest_predictionsKSnew.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainmix_testnew.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
-ax.plot(fpr, tpr, '-', color=colors[1], label="Just new", lw=2)
+ax.plot(fpr, tpr, '-', color=colors[1], label="Trained on mix; tested on new", lw=2)
 
-d = np.loadtxt("RandomForest_predictionsKSmix.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainmix_testmix.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
-ax.plot(fpr, tpr, '--', color=colors[2], label="Mixed", lw=2)
+ax.plot(fpr, tpr, '--', color=colors[2], label="Trained on mix; tested on mix", lw=2)
+
+
+d = np.loadtxt("RandomForest_predictionsKS_trainold_testold.txt")
+fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
+ax.plot(fpr, tpr, '-', color=colors[3], label="Trained on old; tested on old", lw=2)
+
+d = np.loadtxt("RandomForest_predictionsKS_trainold_testnew.txt")
+fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
+ax.plot(fpr, tpr, '-', color=colors[4], label="Trained on old; tested on new", lw=2)
+
+d = np.loadtxt("RandomForest_predictionsKS_trainold_testmix.txt")
+fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
+ax.plot(fpr, tpr, '--', color=colors[5], label="Trained on old; tested on mix", lw=2)
+
+
+d = np.loadtxt("RandomForest_predictionsKS_trainnew_testold.txt")
+fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
+ax.plot(fpr, tpr, '-', color=colors[6], label="Trained on new; tested on old", lw=2)
+
+d = np.loadtxt("RandomForest_predictionsKS_trainnew_testnew.txt")
+fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
+ax.plot(fpr, tpr, '-', color=colors[7], label="Trained on new; tested on new", lw=2)
+
+d = np.loadtxt("RandomForest_predictionsKS_trainnew_testmix.txt")
+fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
+ax.plot(fpr, tpr, '--', color=colors[8], label="Trained on new; tested on mix", lw=2)
 
 ipf = np.argmin(np.abs(pth-0.5))
 #ax1.plot(fpr[ipf], tpr[ipf], 'o', color=colors[i], ms=8)

@@ -35,7 +35,8 @@ def writeNetwork(nh,act):
 
 # read in prior training data
 #filename = "newdata/Swift_train_all.txt"
-filename = "newdata/Swift_new_data.txt"
+#filename = "newdata/Swift_new_data.txt"
+filename = "newdata/log_summary_info_Swiftlc_z360_lum5205_n0042_n1144_n2084_alpha065_beta300_Yonetoku_mod18_noevo_ndet26884_Machine_Learning.txt"
 xall,yall = readdata(filename,0)
 
 # shuffle the data
@@ -64,12 +65,12 @@ if opts.RF:
 	print '\nRandom Forest cross-validation best params: ',RF.best_params_
 	print 'Score = ',RF.score(xall,yall),'\n'
 
-	savefile1a = open('RandomForest_grid_newData.pkl','w')
-	savefile1b = open('RandomForest_best_newData.pkl','w')
-	pickle.dump(RF,savefile1a)
-	pickle.dump(RF.best_estimator_,savefile1b)
-	savefile1a.close()
-	savefile1b.close()
+	#savefile1a = open('RandomForest_grid_newData.pkl','w')
+	#savefile1b = open('RandomForest_best_newData.pkl','w')
+	#pickle.dump(RF,savefile1a)
+	#pickle.dump(RF.best_estimator_,savefile1b)
+	#savefile1a.close()
+	#savefile1b.close()
 
 # finish the grid in nsplits
 if opts.RF2:

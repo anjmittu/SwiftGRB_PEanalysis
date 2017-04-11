@@ -1,6 +1,6 @@
 # import necessary modules
 import numpy as np
-import triangle
+import corner
 import matplotlib.pyplot as plt
 import sys
 from matplotlib.ticker import MultipleLocator
@@ -183,7 +183,7 @@ if (not args.twobreak):
     if (args.seed != -1):
         datafile = 'chains/Seed'+str(args.seed)+'_'+modelname+'_'+args.outdir+'post_equal_weights.dat'
         data = np.loadtxt(datafile, usecols=(0,1,2,3,5))
-        figure = triangle.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$z_1$', r'$N_{\rm tot}$'],
+        figure = corner.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$z_1$', r'$N_{\rm tot}$'],
                                  bins=50, quantiles=[0.05, 0.5, 0.95], show_titles=True, levels=levels,
                                  title_args={"fontsize": 14}, verbose=False, smooth1d=1, smooth=1,
                                  range=[(0,1.6),(0.7,3.2),(-6,0),(1.,10),(1500,10000)],
@@ -199,7 +199,7 @@ if (not args.twobreak):
     else:
         datafile = 'chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat'
         data = np.loadtxt(datafile, usecols=(0,1,2,3,5))
-        figure = triangle.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$z_1$', r'$N_{\rm tot}$'],
+        figure = corner.corner(data, labels=[r'$n_0$',r'$n_1$',r'$n_2$', r'$z_1$', r'$N_{\rm tot}$'],
                                  bins=50, quantiles=[0.05, 0.5, 0.95], show_titles=True, levels=levels,
                                  title_args={"fontsize": 14}, verbose=False, smooth1d=1, smooth=1,
                                  range=[(0,1.6),(0.7,3.2),(-6,0),(1.,10),(1500,10000)],
@@ -209,7 +209,7 @@ if (not args.twobreak):
 
         if (args.fynbo == 1):
             plotRzPost('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
-                       'support_data/FynboGRB_lum_z_Zonly.txt',
+                       'support_data/FynboGRB_lum_z_Zonly1.txt',
                        './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
                        title = 'Real Data')
         else:
@@ -217,8 +217,8 @@ if (not args.twobreak):
                        'support_data/PerleyGRB_sub_z.txt',
                        './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
                        title = 'Real Data')
-           
-        
+
+
 else:
     #TwoBreak
     if (args.seed != -1):
@@ -231,7 +231,7 @@ else:
                                  maxlike=args.maxlike, label_kwargs={"fontsize": 20})
         figure.savefig('./chains/seed'+sys.argv[1]+'_'+modelname+'_TwoBreak_posterior_.png')
         plt.close(figure)
-        
+
         plotRzPostTwoBreak('chains/Seed'+sys.argv[1]+'_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
                            'chains/Seed'+sys.argv[1]+'_'+modelname+'_'+args.outdir+'detectedZdata.txt',
                            './plots/seed'+sys.argv[1]+'_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png', True,
@@ -250,7 +250,7 @@ else:
 
         if (args.fynbo == 1):
             plotRzPostTwoBreak('chains/RD_'+modelname+'_'+args.outdir+'post_equal_weights.dat', N, args.maxlike,
-                               'support_data/FynboGRB_lum_z_Zonly.txt',
+                               'support_data/FynboGRB_lum_z_Zonly1.txt',
                                './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
                                title = 'Real Data')
         else:
@@ -258,5 +258,3 @@ else:
                                'support_data/PerleyGRB_all_z.txt',
                                './plots/RD_'+modelname+'_'+args.outdir+'redshift_distribution_posterior_RF_bestfit.png',
                                title = 'Real Data')
-            
-
