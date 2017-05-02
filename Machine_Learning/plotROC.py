@@ -8,20 +8,20 @@ from matplotlib.ticker import MultipleLocator
 
 Nenc = 0
 Ntrees = 500
-colors = ["k","b","g","m","y","r","c", '#eeefff', '#888fff']
+colors = ["k","b","g","m","y","r","c", '#000fff', '#888fff']
 unif = np.logspace(-5,0,num=100)
 
 fig, ax = plt.subplots(1)
 
-d = np.loadtxt("RandomForest_predictionsKS_trainmix_testold.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainmix3_testold.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
 ax.plot(fpr, tpr, '-', color=colors[0], label="Trained on mix; tested on old", lw=2)
 
-d = np.loadtxt("RandomForest_predictionsKS_trainmix_testnew.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainmix3_testnew.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
 ax.plot(fpr, tpr, '-', color=colors[1], label="Trained on mix; tested on new", lw=2)
 
-d = np.loadtxt("RandomForest_predictionsKS_trainmix_testmix.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainmix3_testmix3.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
 ax.plot(fpr, tpr, '--', color=colors[2], label="Trained on mix; tested on mix", lw=2)
 
@@ -34,7 +34,7 @@ d = np.loadtxt("RandomForest_predictionsKS_trainold_testnew.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
 ax.plot(fpr, tpr, '-', color=colors[4], label="Trained on old; tested on new", lw=2)
 
-d = np.loadtxt("RandomForest_predictionsKS_trainold_testmix.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainold_testmix3.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
 ax.plot(fpr, tpr, '--', color=colors[5], label="Trained on old; tested on mix", lw=2)
 
@@ -47,7 +47,7 @@ d = np.loadtxt("RandomForest_predictionsKS_trainnew_testnew.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
 ax.plot(fpr, tpr, '-', color=colors[7], label="Trained on new; tested on new", lw=2)
 
-d = np.loadtxt("RandomForest_predictionsKS_trainnew_testmix.txt")
+d = np.loadtxt("RandomForest_predictionsKS_trainnew_testmix3.txt")
 fpr, tpr, pth = metrics.roc_curve(d[:,1], d[:,2], pos_label=1)
 ax.plot(fpr, tpr, '--', color=colors[8], label="Trained on new; tested on mix", lw=2)
 
@@ -81,4 +81,4 @@ ax.yaxis.set_major_locator(MultipleLocator(0.1))
 ax.yaxis.set_minor_locator(MultipleLocator(0.025))
 
 plt.show()
-fig.savefig("modelROCs.png", bbox_inches='tight', pad_inches=0.05, dpi=200)
+fig.savefig("modelROCs3.png", bbox_inches='tight', pad_inches=0.05, dpi=200)

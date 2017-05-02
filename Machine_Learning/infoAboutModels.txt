@@ -1,0 +1,29 @@
+RandomForest_grid_oldData.pkl
+    - Data used by graff
+    - Swift_train_all.txt
+    - Best params -> 'max_features': 3, 'min_samples_split': 8
+    - Score = 0.995870858925
+
+Just new data
+    - new spring 2017 data
+    - newDataCombined.txt
+    - Best params -> 'max_features': 9, 'min_samples_split': 16
+    - Score = 0.981666666667
+
+RandomForest_grid_newData.pkl
+    - Data used by graff combined with new spring 2017 data
+    - Swift_new_data.txt
+    - Best params -> 'max_features': 13, 'min_samples_split': 8
+    - Score = 0.996024201629
+
+RandomForest_grid_newData2.pkl
+    - Data used by graff combined with even more new spring 2017 data
+    - Swift_new_data2.txt
+    - Best params -> 'max_features': 5, 'min_samples_split': 8
+    - Score = 0.996372788065
+
+RandomForest_grid_newData3.pkl
+    - Data used by graff combined with even more new May 2017 data
+    - Swift_new_data3.txt
+    - Best params -> 'max_features': 9, 'min_samples_split': 8
+    - Score = 0.996471097147 

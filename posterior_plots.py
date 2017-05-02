@@ -187,7 +187,7 @@ if (not args.twobreak):
                                  bins=50, quantiles=[0.05, 0.5, 0.95], show_titles=True, levels=levels,
                                  title_args={"fontsize": 14}, verbose=False, smooth1d=1, smooth=1,
                                  range=[(0,1.6),(0.7,3.2),(-6,0),(1.,10),(1500,10000)],
-                                 maxlike=args.maxlike, label_kwargs={"fontsize": 20})
+                                 truths=args.maxlike, label_kwargs={"fontsize": 20})
         figure.savefig('./chains/seed'+str(args.seed)+'_'+modelname+'_TwoBreak_posterior_.png')
         plt.close(figure)
 
@@ -203,7 +203,7 @@ if (not args.twobreak):
                                  bins=50, quantiles=[0.05, 0.5, 0.95], show_titles=True, levels=levels,
                                  title_args={"fontsize": 14}, verbose=False, smooth1d=1, smooth=1,
                                  range=[(0,1.6),(0.7,3.2),(-6,0),(1.,10),(1500,10000)],
-                                 maxlike=args.maxlike, label_kwargs={"fontsize": 20})
+                                 truths=args.maxlike, label_kwargs={"fontsize": 20})
         figure.savefig('./plots/RD_'+modelname+'_'+args.outdir+'posterior.png')
         plt.close(figure)
 

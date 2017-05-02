@@ -1,10 +1,10 @@
 Changes to files:
-scr/utils.h 		-> added run arguments to type runargs (utils.h)
+scr/utils.h 		-> added run arguments to type runargs
 
 scr/main.cc	    	-> added two break option
 			-> all added arguments are explained in --help
 
-scr/poputils.c 		-> added two breaK option
+scr/poputils.c 		-> added two break option
 
 
 
@@ -30,11 +30,23 @@ sfr_GRB_test.py		-> plot from Amy
 
 Example commands:
 
+
+To create ML model:
+- Edit Machine_Learning\runModel.py to read correct data and write to correct filename
+% python runModels.py --RF
+
+To plot ROC curve:
+- Edit Machine_Learning\RF_PredictKS.py to read correct data and write to correct filename
+% python RF_PredictKS.py
+- Edit Machine_Learning\plotROC.py to read in file created by RF_PredictKS.py
+% python plotROC.py
+
+To compute the detection fraction:
+- Edit src\detection_fraction*.cc to change output filename
+- Make sure evalRF.py is using the correct model
+% ./RFDetectionFraction --zpts=10001
+
+To plot the posterior plots:
+- Make sure evalRF.py is using the correct model
 ~% ./Analysis --file=support_data/FynboGRB_lum_z_Zonly.txt --method=1 --nlive=3000 --varyz1 --outfile=./chains/RD_RF_OneBreak_
 ~% python posterior_plots.py -ml .49 1.68 -2.73 6.82 4519 -m 1
-
-~% ./Analysis --file=support_data/FynboGRB_lum_z_Zonly.txt --method=1 --nlive=3000 --varyz1 --varyz2 --outfile=./chains/RD_RF_TwoBreak_ --twobreak   
-~% python posterior_plots.py --outdir="Twobreak_" -ml .48 1.69 .42 -4.89 5.46 7.95 4459 -m 1 -tb
-
-
-

@@ -204,7 +204,7 @@ Data Settings\n\
 	if (myid == 0)
 	{
 		// open file for outputs
-	  FILE *outfile = fopen("support_data/splines_detection_fraction_RF_old_and_new_z10000.txt", "w");  /*** Changed -Anj ***/
+	  FILE *outfile = fopen("support_data/splines_detection_fraction_RF_mix3_z10000.txt", "w");  /*** Changed -Anj ***/
 
 		// write results
 		for (i = 0; i < runargs.zpts; i++)

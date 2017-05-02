@@ -11,7 +11,7 @@ def Rz(z,n):
 	log_rho = n1*math.log10(1.0+z)+math.log10(n0);
     if(z > z1):
 	log_rho = (n1-n2)*math.log10(1.0+z1)+n2*math.log10(1.0+z)+math.log10(n0);
-        
+
     val = pow(10.0,log_rho);
     return val;
 
@@ -28,7 +28,7 @@ def RzTwoBreak(z,n):
 	log_rho = (n1-n2)*math.log10(1.0+z1)+n2*math.log10(1.0+z)+math.log10(n0);
     if(z > z2):
 	log_rho = (n2-n3)*math.log10(1.0+z2)+(n1-n2)*math.log10(1.0+z1)+n3*math.log10(1.0+z)+math.log10(n0);
-        
+
     val = pow(10.0,log_rho);
     return val;
 
@@ -40,7 +40,7 @@ def sfr_Hopkins06(z):
 	return val;
 
 def sfr_Hopkins06_piecewise(z):
-	
+
 	##sfr from Hopkins and Beacom 06, piecewise fit
 	z1 = 1.04;
         z2 = 4.48;
@@ -60,7 +60,7 @@ def sfr_Hopkins06_piecewise(z):
 	return val;
 
 def snr(z): ## number/yr/Mpc^3
-	
+
 	## sfr from Horiuchi, Beacom, Dwek 09
 	rho_0 = 0.0178; alpha = 3.4; beta = -0.3; gamma = -3.5;
         z1 = 1.0; z2 = 4.0;
@@ -111,7 +111,7 @@ def snr_lower(z): ## number/yr/Mpc^3
         return val;
 
 def R_GRB(z):
-        rate_GRB_0_global = 0.84/2; ## Gpc^{-3} yr^{-1}      
+        rate_GRB_0_global = 0.84/2; ## Gpc^{-3} yr^{-1}
 
         z1_global = 3.60;
         n1_global = 2.07;
@@ -127,7 +127,7 @@ def R_GRB(z):
         return val;
 
 def R_GRB_test(z):
-        rate_GRB_0_global = 1.01; ## Gpc^{-3} yr^{-1}      
+        rate_GRB_0_global = 1.01; ## Gpc^{-3} yr^{-1}
 
         z1_global = 3.60;
         n1_global = 2.00;
@@ -143,9 +143,9 @@ def R_GRB_test(z):
         return val;
 
 def R_GRB_bestlow(z):
-        #rate_GRB_0_global = 0.72; ## Gpc^{-3} yr^{-1}      
-	#rate_GRB_0_global = 0.78; ## Gpc^{-3} yr^{-1} 
-	rate_GRB_0_global = 0.75/2; ## Gpc^{-3} yr^{-1} 
+        #rate_GRB_0_global = 0.72; ## Gpc^{-3} yr^{-1}
+	#rate_GRB_0_global = 0.78; ## Gpc^{-3} yr^{-1}
+	rate_GRB_0_global = 0.75/2; ## Gpc^{-3} yr^{-1}
 
         #z1_global = 3.60;
         #n1_global = 2.20;
@@ -167,7 +167,7 @@ def R_GRB_bestlow(z):
         return val;
 
 def R_GRB_besthi(z):
-        rate_GRB_0_global = 1.01/2; ## Gpc^{-3} yr^{-1}      
+        rate_GRB_0_global = 1.01/2; ## Gpc^{-3} yr^{-1}
 
         z1_global = 3.60;
         n1_global = 1.95;
@@ -183,7 +183,7 @@ def R_GRB_besthi(z):
         return val;
 
 
-print 'Yuksel z = 0', snr(0.0)	
+print 'Yuksel z = 0', snr(0.0)
 print 'Hopkins z = 0', sfr_Hopkins06_piecewise(0.0)
 
 zi = 0.0
@@ -202,6 +202,7 @@ R_GRB_z_besthi_array = []
 One_R_GRB_z_array = []
 Two_R_GRB_z_array = []
 Perley_GRB_z_array = []
+Mix3_GRB_z_array = []
 Zero_R_GRB_z_array = []
 ZeroHigh_R_GRB_z_array = []
 ZeroLow_R_GRB_z_array = []
@@ -216,15 +217,16 @@ for i in range(0,i_max+1):
 	R_GRB_test_z = R_GRB_test(z)
 	R_GRB_bestlow_z = R_GRB_bestlow(z)
 	R_GRB_besthi_z = R_GRB_besthi(z)
-        #One_R_GRB_z = Rz(z,[.513, 1.656, -5.997, 6.70, 4434])
+    #One_R_GRB_z = Rz(z,[.513, 1.656, -5.997, 6.70, 4434])
         One_R_GRB_z = Rz(z,[.74, 1.68, -2.73, 6.82, 4434])
-        #Two_R_GRB_z = RzTwoBreak(z, [.411, 1.878, .978, -8.804, 3.403, 6.600, 3919])
+    #Two_R_GRB_z = RzTwoBreak(z, [.411, 1.878, .978, -8.804, 3.403, 6.600, 3919])
         Two_R_GRB_z = RzTwoBreak(z, [.72, 1.69, .42, -4.89, 5.46, 7.96, 4460])
-        #Perley_GRB_z = Rz(z, [1.15, 1.39, -5.88, 5.44, 5294])
+    #Perley_GRB_z = Rz(z, [1.15, 1.39, -5.88, 5.44, 5294])
         Perley_GRB_z = Rz(z, [1.05, 1.37, -2.95, 6.01, 6190])
         Zero_R_GRB_z = RzTwoBreak(z, [.331, 3.28, -.26, -8, 1.04, 4.48, 1762])
         ZeroHigh_R_GRB_z = RzTwoBreak(z, [.401, 3.28, -.26, -8, 1.04, 4.48, 1762])
         ZeroLow_R_GRB_z = RzTwoBreak(z, [.271, 3.28, -.26, -8, 1.04, 4.48, 1762])
+        Mix3_GRB_z = Rz(z, [.49, 1.69, -5.58, 6.66, 4455])
 	#print R_GRB(0.0)
 
 	z_array.append(z)
@@ -242,6 +244,7 @@ for i in range(0,i_max+1):
         Zero_R_GRB_z_array.append(Zero_R_GRB_z)
         ZeroHigh_R_GRB_z_array.append(ZeroHigh_R_GRB_z)
         ZeroLow_R_GRB_z_array.append(ZeroLow_R_GRB_z)
+        Mix3_GRB_z_array.append(Mix3_GRB_z)
 
 	##print z, '%e' % snr_z, '%e' % R_GRB_z
 
@@ -276,6 +279,7 @@ plt.fill_between(z_array,ZeroHigh_R_GRB_z_array,ZeroLow_R_GRB_z_array,color='c',
 plt.plot(z_array,R_GRB_z_array,'r',linewidth=1.5,label='GRB Rate from Lien et al. (2014) (without Luminosity Evolution)')
 plt.plot(z_array,snr_z_hi_array,'b:')
 plt.plot(z_array,snr_z_low_array,'b:')
+plt.plot(z_array,Mix3_GRB_z_array,'brown',linewidth=1.5,label='GRB Rate using mixed 2017 data')
 plt.fill_between(z_array,snr_z_hi_array,snr_z_low_array,color='b',alpha=0.25)
 plt.plot(z_array,snr_z_array,'b--',linewidth=1.5,label='GRB Rate $\propto$ SFR from Yuksel et al. 2008 (with Luminosity Evolution)')
 #plt.plot(z_array,sfr_hopkins06_z_array,'yellow',linewidth='3.5',label='GRB Rate $\propto$ SFR from Hopkins & Beacom 2006 (with Luminosity Evolution)')
@@ -286,5 +290,5 @@ plt.xlabel('Redshift z')
 plt.ylabel('GRB Rate [Gpc$^{-3}$ yr$^{-1}$]')
 plt.legend(prop={'size':10.5})
 
-#plt.savefig('snr_GRB_paper.eps')
+#plt.savefig('sfr_Mix3.png')
 plt.show()
